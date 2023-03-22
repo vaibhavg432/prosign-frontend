@@ -1,4 +1,2 @@
-const COLORS = {};
-const FONTS = {};
 
-export { COLORS, FONTS };
+export const FONTS = {};

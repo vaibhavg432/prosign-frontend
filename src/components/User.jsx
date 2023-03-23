@@ -50,7 +50,11 @@ const User = ({ name, Component }) => {
 			label: (
 				<div
 					className="flex items-center gap-2"
-					onClick={() => navigate("/")}
+					onClick={() => {
+						localStorage.removeItem("token");
+						localStorage.removeItem("user");
+						navigate("/login");
+					}}
 				>
 					<CgLogOut />
 					Logout
@@ -58,13 +62,15 @@ const User = ({ name, Component }) => {
 			),
 		},
 	];
+
 	return (
 		<div className={`${color.primary} w-full flex`}>
-			<div className="w-2/12 flex flex-col gap-4 fixed bg-white">
+			<div className="sm:w-2/12 sm:flex hidden flex-col gap-4 fixed bg-white">
 				<UserNavbar />
 			</div>
+			<div className="sm:hidden fixed bottom-2 left-2 z-[10]">Nav</div>
 			<div
-				className={`${color.primary} min-h-[100vh] w-10/12 flex flex-col gap-4  p-4 absolute right-[0px]`}
+				className={`${color.primary} min-h-[100vh] w-full sm:w-10/12 flex flex-col gap-4  p-4 absolute right-[0px]`}
 			>
 				<div className="w-full flex justify-between">
 					<div>

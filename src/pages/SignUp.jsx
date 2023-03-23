@@ -1,12 +1,15 @@
 import React, { useState } from "react";
-import { Button, Space } from "antd";
+import { Button, Space, message } from "antd";
 import { useNavigate } from "react-router-dom";
 
 import "../index.css";
 import { COLORS, styles } from "../constants";
 import signup from "../assets/images/signup.svg";
+import { useRegisterMutation } from "../services/AuthApi";
 
 const SignUp = () => {
+	const [messageApi, contextHolder] = message.useMessage();
+	const [register] = useRegisterMutation();
 	const navigate = useNavigate();
 	const [form, setForm] = useState({
 		name: "",
@@ -15,9 +18,28 @@ const SignUp = () => {
 		confirmPassword: "",
 	});
 	const color = COLORS;
-	const onSubmit = (e) => {
+	const error = (text) => {
+		messageApi.open({
+			type: "error",
+			content: text,
+		});
+	};
+
+	const success = (text) => {
+		messageApi.open({
+			type: "success",
+			content: text,
+		});
+	};
+	const onSubmit = async (e) => {
 		e.preventDefault();
-		console.log(form);
+		const data = await register(form);
+		console.log(data);
+		// if (!data.success) {
+		// 	error(data.message);
+		// } else {
+		// 	success(data.message);
+		// }
 	};
 	return (
 		<div className={`w-full h-[100vh] flex ${color.primary}`}>
@@ -96,13 +118,14 @@ const SignUp = () => {
 								direction="vertical"
 								style={{ width: "100%" }}
 							>
+								{contextHolder}
 								<Button
 									type="primary"
 									block
 									className="bg-[#598392]"
 									onClick={onSubmit}
 								>
-									Login
+									Register
 								</Button>
 							</Space>
 						</div>

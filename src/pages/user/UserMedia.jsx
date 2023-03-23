@@ -114,6 +114,7 @@ const Media = () => {
 				columns={columns}
 				dataSource={documents}
 				pagination={{ pageSize: 5, position: ["bottomCenter"] }}
+				scroll={{ x: 240 }}
 			/>
 		</div>
 	);

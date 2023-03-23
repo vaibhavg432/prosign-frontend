@@ -1,6 +1,7 @@
 import { MdSpaceDashboard, MdPermMedia, MdMonitor } from "react-icons/md";
-import {  FaBusinessTime } from "react-icons/fa";
+import { FaBusinessTime } from "react-icons/fa";
 
+export const apiUrl = "http://localhost:5000/api/";
 
 const styles = {
 	icon: "text-[#black] text-[20px		] font-medium",
@@ -28,8 +29,6 @@ export const userLinks = [
 		icon: <FaBusinessTime className={styles.icon} />,
 	},
 ];
-
-
 
 export const adminLinks = [
 	{

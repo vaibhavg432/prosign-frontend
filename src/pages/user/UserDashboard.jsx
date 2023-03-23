@@ -1,7 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+
+import { userLogin, adminLogin } from "../../features/Login";
 import { User } from "../../components";
 
 const UserDashboard = () => {
+	const dispatch = useDispatch();
+	const userLog = useSelector((state) => state.auth.userLoggedIn);
+	const adminLog = useSelector((state) => state.auth.adminLoggedIn);
+	useEffect(() => {
+		if (localStorage.getItem("token")) {
+			dispatch(userLogin());
+		}
+		console.log(userLog);
+	}, []);
 	return <User name="Dashboard" />;
 };
 

@@ -1,23 +1,59 @@
 import React, { useState } from "react";
-import { Button, Space } from "antd";
+import { useSelector, useDispatch } from "react-redux";
+import { Button, Space, message } from "antd";
 import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 
 import "../index.css";
 import { COLORS, styles } from "../constants";
-import login from "../assets/images/login.svg";
+import logins from "../assets/images/login.svg";
+import { useLoginMutation } from "../services/AuthApi";
+import { userLogin, adminLogin } from "../features/Login";
 
 const Login = () => {
+	const [messageApi, contextHolder] = message.useMessage();
+	const userLog = useSelector((state) => state.auth.userLoggedIn);
+	const adminLog = useSelector((state) => state.auth.adminLoggedIn);
+	const dispatch = useDispatch();
 	const navigate = useNavigate();
+	const [login] = useLoginMutation();
 	const [form, setForm] = useState({
 		email: "",
 		password: "",
 	});
 	const color = COLORS;
-	const onSubmit = (e) => {
+	const error = (text) => {
+		messageApi.open({
+			type: "error",
+			content: text,
+		});
+	};
+
+	const success = (text) => {
+		messageApi.open({
+			type: "success",
+			content: text,
+		});
+	};
+	const onSubmit = async (e) => {
 		e.preventDefault();
-		console.log(form);
-		navigate("/user");
+		const { data } = await login(form);
+		console.log(data);
+		if (!data.success) {
+			error(data.message);
+		} else {
+			success(data.message);
+			localStorage.setItem("token", data.token);
+			if (data.role === "admin") {
+				localStorage.setItem("admin", true);
+				dispatch(adminLogin());
+				navigate("/admin");
+			} else if (data.role === "user") {
+				localStorage.setItem("user", true);
+				dispatch(userLogin());
+				navigate("/user");
+			}
+		}
 	};
 	return (
 		<div className={`w-full max-h-[100vh]  ${color.primary}`}>
@@ -32,7 +68,7 @@ const Login = () => {
 			</div>
 			<div className="flex h-[90vh] ">
 				<div className="w-1/2 sm:flex hidden justify-center items-center">
-					<img src={login} alt="login" className="w-[75%] h-[75%]" />
+					<img src={logins} alt="login" className="w-[75%] h-[75%]" />
 				</div>
 				<div className="sm:w-1/2 w-full flex justify-center items-center">
 					<div
@@ -79,6 +115,7 @@ const Login = () => {
 									direction="vertical"
 									style={{ width: "100%" }}
 								>
+									{contextHolder}
 									<Button
 										type="primary"
 										block

@@ -9,6 +9,13 @@ const Monitors = () => {
 	const [showPassword, setShowPassword] = useState([]);
 	const [isOpen, setIsOpen] = useState(false);
 
+	const showMessage = (text) => {
+		messageApi.open({
+			type: "success",
+			content: text,
+		});
+	};
+
 	const columns = [
 		{
 			title: "SNo.",
@@ -46,16 +53,14 @@ const Monitors = () => {
 						>
 							{showPassword[index] ? "Hide" : "Show"}
 						</Tag>
+						{contextHolder}
 						{showPassword[index] && (
 							<Tag
 								color="blue"
 								className="cursor-pointer"
 								onClick={() => {
 									navigator.clipboard.writeText(text);
-									messageApi.open({
-										type: "success",
-										content: "Password Copied",
-									});
+									showMessage("Password Copied");
 								}}
 							>
 								Copy
@@ -133,6 +138,7 @@ const Monitors = () => {
 					columns={columns}
 					dataSource={users}
 					pagination={{ pageSize: 5, position: ["bottomCenter"] }}
+					scroll={{ x: 240 }}
 				/>
 			</div>
 		</div>

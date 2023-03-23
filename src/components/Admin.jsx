@@ -55,6 +55,8 @@ const Admin = (props) => {
 				<div
 					className="flex items-center gap-2"
 					onClick={() => {
+						localStorage.removeItem("token");
+						localStorage.removeItem("admin");
 						navigate("/login");
 					}}
 				>

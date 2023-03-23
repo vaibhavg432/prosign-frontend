@@ -68,6 +68,7 @@ const Schedule = () => {
 					columns={columns}
 					dataSource={current}
 					pagination={{ pageSize: 5, position: ["bottomCenter"] }}
+					scroll={{ x: 240 }}
 				/>
 			</div>
 			<div className="w-full mt-4">

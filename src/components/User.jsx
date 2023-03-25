@@ -1,12 +1,14 @@
 import React from "react";
 import { Dropdown, Space } from "antd";
-import { AiOutlineDown } from "react-icons/ai";
+import { AiOutlineDown, AiOutlineMenu } from "react-icons/ai";
+import { MdSpaceDashboard, MdPermMedia, MdMonitor } from "react-icons/md";
 import { CgProfile, CgLogOut } from "react-icons/cg";
-import { FaUsers, FaUserAlt } from "react-icons/fa";
+import { FaUsers, FaUserAlt, FaBusinessTime } from "react-icons/fa";
 import { IoSettingsSharp } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
 import { UserNavbar } from "../components";
+import { userLinks } from "../constants/data";
 import { COLORS as color } from "../constants";
 
 const User = ({ name, Component }) => {
@@ -20,7 +22,7 @@ const User = ({ name, Component }) => {
 					onClick={() => navigate("/user/profile")}
 				>
 					<CgProfile />
-					My Profile
+					Profile & Settings
 				</div>
 			),
 		},
@@ -30,18 +32,6 @@ const User = ({ name, Component }) => {
 				<div className="flex items-center gap-2">
 					<FaUsers />
 					Users
-				</div>
-			),
-		},
-		{
-			key: "3",
-			label: (
-				<div
-					className="flex items-center gap-2"
-					onClick={() => navigate("/user/settings")}
-				>
-					<IoSettingsSharp />
-					Settings
 				</div>
 			),
 		},
@@ -63,12 +53,88 @@ const User = ({ name, Component }) => {
 		},
 	];
 
+	const userNav = []
+	for(let i = 0; i < userLinks.length; i++) {
+		userNav.push({
+			key: i,
+			label: (
+				<div
+					className="flex items-center gap-2"
+					onClick={() => navigate(userLinks[i].link)}
+				>
+					{userLinks[i].icon}
+					{userLinks[i].name}
+				</div>
+			),
+		});
+	}
+	// 	{
+	// 		key: "1",
+	// 		label: (
+	// 			<div
+	// 				className="flex items-center gap-2"
+	// 				onClick={() => navigate("/user")}
+	// 			>
+	// 				<MdSpaceDashboard />
+	// 				Dashboard
+	// 			</div>
+	// 		),
+	// 	},
+	// 	{
+	// 		key: "1",
+	// 		label: (
+	// 			<div
+	// 				className="flex items-center gap-2"
+	// 				onClick={() => navigate("/user/media")}
+	// 			>
+	// 				<MdPermMedia />
+	// 				Media
+	// 			</div>
+	// 		),
+	// 	},
+	// 	{
+	// 		key: "1",
+	// 		label: (
+	// 			<div
+	// 				className="flex items-center gap-2"
+	// 				onClick={() => navigate("/user/monitors")}
+	// 			>
+	// 				<MdMonitor />
+	// 				Monitors
+	// 			</div>
+	// 		),
+	// 	},
+	// 	{
+	// 		key: "1",
+	// 		label: (
+	// 			<div
+	// 				className="flex items-center gap-2"
+	// 				onClick={() => navigate("/user/schedule")}
+	// 			>
+	// 				<FaBusinessTime />
+	// 				Schedule
+	// 			</div>
+	// 		),
+	// 	},
+	// ];
 	return (
 		<div className={`${color.primary} w-full flex`}>
 			<div className="sm:w-2/12 sm:flex hidden flex-col gap-4 fixed bg-white">
 				<UserNavbar />
 			</div>
-			<div className="sm:hidden fixed bottom-2 left-2 z-[10]">Nav</div>
+			<div className="sm:hidden fixed bottom-2 left-2 z-[10]">
+				<Dropdown
+					menu={{ items: userNav }}
+					trigger={["click"]}
+					className="cursor-pointer"
+				>
+					<div onClick={(e) => e.preventDefault()}>
+						<div className="w-12 h-12 bg-white rounded-full p-4 flex justify-center items-center">
+							<AiOutlineMenu className="text-xl cursor-pointer" />
+						</div>
+					</div>
+				</Dropdown>
+			</div>
 			<div
 				className={`${color.primary} min-h-[100vh] w-full sm:w-10/12 flex flex-col gap-4  p-4 absolute right-[0px]`}
 			>

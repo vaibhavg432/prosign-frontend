@@ -1,23 +1,25 @@
-import React from "react";
-import { Table, Tag, Select, Button } from "antd";
+import React, { useState } from "react";
+import { Table, Tag, Select, Button, message, Popconfirm } from "antd";
 
 import { User } from "../../components";
-import { documents } from "../../constants/data";
+import {
+	useGetCurrentPlayingMonitorsQuery,
+	usePlayOneDocumentOnAllScreenMutation,
+	useStopAllScreensMutation,
+} from "../../services/UserMonitorApi";
+
+import { useGetAllDocumentsQuery } from "../../services/UserMediaApi";
 
 const Schedule = () => {
-	const current = [
-		{
-			_id: "641734dd91edc793ca41b95e",
-
-			link: "https://5.imimg.com/data5/UC/ZI/DA/SELLER-3769111/godrej-stylo-office-tabl-1000x1000.jpg",
-			userId: {
-				$oid: "64168c5d5271f671a2a96cd1",
-			},
-			date: "2023-03-19T16:14:21.805+00:00",
-			__v: 0,
-		},
-	];
-
+	const [messageApi, contextHolder] = message.useMessage();
+	const [selectedDocument, setSelectedDocument] = useState("");
+	const { data } = useGetCurrentPlayingMonitorsQuery();
+	const { data: allDocuments, isLoading } = useGetAllDocumentsQuery();
+	const documents = allDocuments?.documents;
+	const [playOneDocumentOnAllScreen] =
+		usePlayOneDocumentOnAllScreenMutation();
+	const [stopAllScreens] = useStopAllScreensMutation();
+	const current = data?.screens;
 	const columns = [
 		{
 			title: "SNo.",
@@ -28,30 +30,32 @@ const Schedule = () => {
 			},
 		},
 		{
+			title: "Screen",
+			dataIndex: "username",
+			key: "username",
+		},
+		{
 			title: "Media",
-			dataIndex: "link",
-			key: "link",
-			render: (text) => {
-				return <img src={text} alt="media" className="w-12 h-12" />;
-			},
+			dataIndex: "document",
+			key: "document",
 		},
 		{
 			title: "Date Uploaded",
-			dataIndex: "date",
-			key: "date",
+			dataIndex: "lastUpdated",
+			key: "lastUpdated",
 			render: (text) => {
 				return new Date(text).toLocaleDateString();
 			},
 		},
 		{
-			title: "Action",
-			dataIndex: "action",
-			key: "action",
-			render: (text, record) => {
+			title: "Status",
+			dataIndex: "status",
+			key: "status",
+			render: (text) => {
 				return (
-					<div className="flex items-center gap-2">
-						<Tag color="blue">Stop Playing</Tag>
-					</div>
+					<Tag color={text === "active" ? "green" : "red"}>
+						{text.toUpperCase()}
+					</Tag>
 				);
 			},
 		},
@@ -63,7 +67,35 @@ const Schedule = () => {
 			</div>
 			{/*Current Playing Media */}
 			<div className="w-full mt-4">
-				<h1 className="py-4">Current Playing Media</h1>
+				<div className="w-full flex justify-between">
+					<h1 className="py-4">Current Playing Media</h1>
+					<Popconfirm
+						title="Are you sure you want to stop all screens?"
+						onConfirm={() => {
+							stopAllScreens();
+							messageApi.success({
+								content: "Stopped Playing Media",
+								duration: 2,
+							});
+						}}
+						okText="Yes"
+						okButtonProps={{ danger: true }}
+						cancelText="No"
+						onCancel={() => {
+							messageApi.success({
+								content: "Cancelled",
+								duration: 2,
+							});
+						}}
+					>
+						<Button
+							type="primary"
+							className="bg-[#598392] mt-4"
+						>
+							Stop Playing
+						</Button>
+					</Popconfirm>
+				</div>
 				<Table
 					columns={columns}
 					dataSource={current}
@@ -74,24 +106,36 @@ const Schedule = () => {
 			<div className="w-full mt-4">
 				<h1 className="py-4">Play New Media</h1>
 				<div>
-					<Select
-						defaultValue="lucy"
-						style={{
-							width: "100%",
-						}}
-						options={documents.map((doc) => {
-							return {
-								value: doc._id,
-								label: doc._id,
-							};
-						})}
-					/>
+					{!isLoading && (
+						<Select
+							defaultValue="Select Media"
+							value={selectedDocument}
+							onChange={(value) => {
+								setSelectedDocument(value);
+							}}
+							style={{
+								width: "100%",
+							}}
+							options={documents.map((doc) => {
+								return {
+									value: doc._id,
+									label: doc.name,
+								};
+							})}
+						/>
+					)}
 					<br />
+					{contextHolder}
 					<Button
 						type="primary"
 						className="bg-[#598392] mt-4"
 						onClick={() => {
-							console.log("Play");
+							playOneDocumentOnAllScreen(selectedDocument);
+							messageApi.success({
+								content: "Playing Media",
+								duration: 2,
+							});
+							setSelectedDocument("");
 						}}
 					>
 						Play

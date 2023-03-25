@@ -2,16 +2,33 @@ import React, { useEffect, useState } from "react";
 import { Table, Tag, message, Button, Space, Modal, Input } from "antd";
 
 import { User } from "../../components";
-import { users } from "../../constants/data";
+import {
+	useGetUserMonitorQuery,
+	useAddMonitorMutation,
+} from "../../services/UserMonitorApi";
+import { useGetUserQuery } from "../../services/UserApi";
 
 const Monitors = () => {
+	const [addMonitor] = useAddMonitorMutation();
+	const { data } = useGetUserMonitorQuery();
+	const { data: userData, isLoading } = useGetUserQuery();
+	const users = data?.screens;
+	const user = userData?.user;
 	const [messageApi, contextHolder] = message.useMessage();
 	const [showPassword, setShowPassword] = useState([]);
+	const [count, setCount] = useState(0);
 	const [isOpen, setIsOpen] = useState(false);
 
 	const showMessage = (text) => {
 		messageApi.open({
 			type: "success",
+			content: text,
+		});
+	};
+
+	const showError = (text) => {
+		messageApi.open({
+			type: "error",
 			content: text,
 		});
 	};
@@ -87,14 +104,15 @@ const Monitors = () => {
 			},
 		},
 		{
-			title: "Media Playing",
+			title: "Media Playing / Last Played",
 			dataIndex: "document",
 			key: "document",
 		},
 	];
 	//fill data of showpassword with length of users with false
 	useEffect(() => {
-		setShowPassword(Array(users.length).fill(false));
+		setShowPassword(Array(users?.length).fill(false));
+		console.log(data);
 	}, []);
 	return (
 		<div className="w-full flex flex-col gap-8">
@@ -116,15 +134,52 @@ const Monitors = () => {
 							okButtonProps={{ style: { display: "none" } }}
 							onCancel={() => setIsOpen(false)}
 						>
-							<p>No. of Vacant Users Left : 4</p>
-							<div className="mt-4">
-								<label>How many Users you want to add ?*</label>
-								<Input type="number" max={4} />
-							</div>
+							{!isLoading && (
+								<p>
+									No. of Vacant Users Left :{" "}
+									{user.screenLimit - user.screenCount}
+								</p>
+							)}
+							{!isLoading && (
+								<div className="mt-4">
+									<label>
+										How many Users you want to add ?*
+									</label>
+									<Input
+										type="number"
+										max={
+											user.screenLimit - user.screenCount
+										}
+										min={0}
+										value={count}
+										onChange={(e) => {
+											setCount(e.target.value);
+										}}
+									/>
+								</div>
+							)}
+							{contextHolder}
 							<Button
 								type="primary"
 								className="bg-[#598392] mt-4"
-								onClick={() => setIsOpen(false)}
+								onClick={() => {
+									if (
+										count >
+										user.screenLimit - user.screenCount
+									) {
+										showError(
+											"You can't add more than " +
+												(user.screenLimit -
+													user.screenCount) +
+												" users",
+										);
+										return;
+									}
+									addMonitor(count);
+									setIsOpen(false);
+									showMessage(count + " Monitor Added");
+									setCount(0);
+								}}
 							>
 								Add
 							</Button>
@@ -136,7 +191,7 @@ const Monitors = () => {
 			<div>
 				<Table
 					columns={columns}
-					dataSource={users}
+					dataSource={data?.screens}
 					pagination={{ pageSize: 5, position: ["bottomCenter"] }}
 					scroll={{ x: 240 }}
 				/>

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import { userLinks } from "../constants/data";
@@ -7,10 +7,6 @@ import { styles } from "../constants";
 const UserNavbar = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
-
-	useEffect(() => {
-		console.log(location.pathname);
-	}, []);
 
 	return (
 		<div className="w-full py-12 h-[100vh] shadow-xl">

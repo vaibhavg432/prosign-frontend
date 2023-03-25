@@ -1,12 +1,19 @@
-import React, { useState } from "react";
-import { Button, Space, Modal, Table, Tag } from "antd";
+import React, { useState, useEffect } from "react";
+import { Button, Space, Modal, Table, Popconfirm, message, Upload } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
-import { message, Upload } from "antd";
 
 import { User } from "../../components";
-import { documents } from "../../constants/data";
+// import { documents } from "../../constants/data";
+import {
+	useGetAllDocumentsQuery,
+	useDeleteOneDocumentMutation,
+} from "../../services/UserMediaApi";
 
 const Media = () => {
+	const [messageApi, contextHolder] = message.useMessage();
+	const { data, isLoading, isFetching, isError } = useGetAllDocumentsQuery();
+	const documents = data?.documents;
+	const [deleteOneDocument] = useDeleteOneDocumentMutation();
 	const { Dragger } = Upload;
 	const columns = [
 		{
@@ -16,6 +23,11 @@ const Media = () => {
 			render: (text, record, index) => {
 				return index + 1;
 			},
+		},
+		{
+			title: "Name",
+			dataIndex: "name",
+			key: "name",
 		},
 		{
 			title: "Media",
@@ -40,8 +52,35 @@ const Media = () => {
 			render: (text, record) => {
 				return (
 					<div className="flex items-center gap-2">
-						<Tag color="blue">Edit</Tag>
-						<Tag color="red">Delete</Tag>
+						{contextHolder}
+						<Popconfirm
+							title="Are you sure to delete this document?"
+							onConfirm={() => {
+								deleteOneDocument(record._id);
+								messageApi.success(
+									"Document deleted successfully",
+								);
+							}}
+							onCancel={() => {
+								messageApi.error("Document not deleted");
+							}}
+							okText="Yes"
+							cancelText="No"
+							okButtonProps={{ danger: true }}
+						>
+							<Button type="primary" className="bg-[#598392]">
+								Delete
+							</Button>
+						</Popconfirm>
+						<Popconfirm>
+							<Button
+								type="primary"
+								danger
+								className="bg-[#598392]"
+							>
+								Edit
+							</Button>
+						</Popconfirm>
 					</div>
 				);
 			},

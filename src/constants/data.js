@@ -4,7 +4,7 @@ import { FaBusinessTime } from "react-icons/fa";
 export const apiUrl = "http://localhost:5000/api/";
 
 const styles = {
-	icon: "text-[#black] text-[20px		] font-medium",
+	icon: "text-[#black] text-[20px] font-medium",
 };
 
 export const userLinks = [

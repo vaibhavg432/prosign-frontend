@@ -12,7 +12,8 @@ import { userLogin, adminLogin } from "../features/Login";
 
 const Login = () => {
 	const [messageApi, contextHolder] = message.useMessage();
-	const userLog = useSelector((state) => state.auth.userLoggedIn);
+	// eslint-disable-next-line
+	const userLog = useSelector((state) => state.auth.userLoggedIn);// eslint-disable-next-line
 	const adminLog = useSelector((state) => state.auth.adminLoggedIn);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();

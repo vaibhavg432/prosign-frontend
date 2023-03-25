@@ -23,6 +23,7 @@ const Navbar = () => {
 			dispatch(logout());
 			navigate("/");
 		}
+		// eslint-disable-next-line
 	}, []);
 
 	return (

@@ -11,7 +11,6 @@ import {
 	UserMonitor,
 	UserSchedule,
 	UserProfile,
-	UserSettings,
 } from "./pages/user";
 import {
 	AdminDashboard,
@@ -45,37 +44,17 @@ const App = () => {
 				<Route path="/login" element={<Login />} />
 				<Route path="/signup" element={<SignUp />} />
 
-				<Route
-					path="/user"
-					element={userLog ? <UserDashboard /> : <NotAccess />}
-				/>
-				<Route
-					path="/user/monitors"
-					element={userLog ? <UserMonitor /> : <NotAccess />}
-				/>
-				<Route
-					path="/user/media"
-					element={userLog ? <UserMedia /> : <NotAccess />}
-				/>
-				<Route
-					path="/user/schedule"
-					element={userLog ? <UserSchedule /> : <NotAccess />}
-				/>
-				<Route
-					path="/user/profile"
-					element={userLog ? <UserProfile /> : <NotAccess />}
-				/>
-				<Route
-					path="/user/settings"
-					element={userLog ? <UserSettings /> : <NotAccess />}
-				/>
+				<Route path="/user" element={userLog ? <UserDashboard /> : <NotAccess />} />
+				<Route path="/user/monitors" element={userLog ? <UserMonitor /> : <NotAccess />} />
+				<Route path="/user/media" element={userLog ? <UserMedia /> : <NotAccess />} />
+				<Route path="/user/schedule" element={userLog ? <UserSchedule /> : <NotAccess />} />
+				<Route path="/user/profile" element={userLog ? <UserProfile /> : <NotAccess />} />
 				
-				{adminLog && (
-					<Route path="/admin" element={<AdminDashboard />} />
-				)}
-				<Route path="/admin/users" element={<AdminUsers />} />
-				<Route path="/admin/profile" element={<AdminProfile />} />
-				<Route path="/admin/settings" element={<AdminSettings />} />
+				<Route path="/admin" element={adminLog ? <AdminDashboard /> : <NotAccess/>} />
+				<Route path="/admin/users" element={adminLog ? <AdminUsers /> : <NotAccess/>} />
+				<Route path="/admin/profile" element={adminLog ? <AdminProfile /> : <NotAccess/>} />
+				<Route path="/admin/settings" element={adminLog ? <AdminSettings /> : <NotAccess/>} />
+				
 				<Route path="*" element={<NotFound />} />
 			</Routes>
 		</Router>

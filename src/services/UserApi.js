@@ -21,8 +21,16 @@ export const userApi = createApi({
 			providesTags: (result) =>
 				result ? ["User", "UserMonitor"] : ["User", "UserMonitor"],
 		}),
+		editUserProfile: builder.mutation({
+			query: (data) => ({
+				url: "edit-user-profile",
+				method: "PATCH",
+				body: data,
+			}),
+			invalidatesTags: ["User", "UserMonitor"],
+		}),
 	}),
 });
 
-export const { useGetUserQuery } = userApi;
+export const { useGetUserQuery, useEditUserProfileMutation } = userApi;
 export default userApi;

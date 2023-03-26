@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Table, Tag, Select, Button, message, Popconfirm } from "antd";
+import { AiOutlineLink } from "react-icons/ai";
 
 import { User } from "../../components";
 import {
@@ -38,6 +39,23 @@ const Schedule = () => {
 			title: "Media",
 			dataIndex: "document",
 			key: "document",
+			render: (text) => {
+				return (
+					<div className="flex gap-4 items-center">
+						{documents?.find((doc) => doc._id === text)?.name}
+
+						<AiOutlineLink
+							className="cursor-pointer text-xl text-blue-500"
+							onClick={() => {
+								window.open(
+									documents?.find((doc) => doc._id === text)
+										.link,
+								);
+							}}
+						/>
+					</div>
+				);
+			},
 		},
 		{
 			title: "Date Uploaded",
@@ -48,13 +66,13 @@ const Schedule = () => {
 			},
 		},
 		{
-			title: "Status",
+			title: "Device Status",
 			dataIndex: "status",
 			key: "status",
 			render: (text) => {
 				return (
 					<Tag color={text === "active" ? "green" : "red"}>
-						{text.toUpperCase()}
+						{text === "active" ? "ONLINE" : "OFFLINE"}
 					</Tag>
 				);
 			},
@@ -88,10 +106,7 @@ const Schedule = () => {
 							});
 						}}
 					>
-						<Button
-							type="primary"
-							className="bg-[#598392] mt-4"
-						>
+						<Button type="primary" className="bg-[#598392] mt-4">
 							Stop Playing
 						</Button>
 					</Popconfirm>
@@ -130,6 +145,13 @@ const Schedule = () => {
 						type="primary"
 						className="bg-[#598392] mt-4"
 						onClick={() => {
+							if (selectedDocument === "") {
+								messageApi.error({
+									content: "Please Select a Media",
+									duration: 2,
+								});
+								return;
+							}
 							playOneDocumentOnAllScreen(selectedDocument);
 							messageApi.success({
 								content: "Playing Media",

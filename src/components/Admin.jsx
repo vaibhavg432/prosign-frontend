@@ -3,7 +3,6 @@ import { Dropdown, Space } from "antd";
 import { AiOutlineDown } from "react-icons/ai";
 import { CgProfile, CgLogOut } from "react-icons/cg";
 import { FaUsers, FaUserAlt } from "react-icons/fa";
-import { IoSettingsSharp } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
 import { AdminNavbar } from "../components";
@@ -22,7 +21,7 @@ const Admin = (props) => {
 					}}
 				>
 					<CgProfile />
-					My Profile
+					Profile & Settings
 				</div>
 			),
 		},
@@ -32,20 +31,6 @@ const Admin = (props) => {
 				<div className="flex items-center gap-2">
 					<FaUsers />
 					Users
-				</div>
-			),
-		},
-		{
-			key: "3",
-			label: (
-				<div
-					className="flex items-center gap-2"
-					onClick={() => {
-						navigate("/admin/settings");
-					}}
-				>
-					<IoSettingsSharp />
-					Settings
 				</div>
 			),
 		},
@@ -93,6 +78,7 @@ const Admin = (props) => {
 						</Dropdown>
 					</div>
 				</div>
+				{props.Component}
 			</div>
 		</div>
 	);

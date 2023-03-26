@@ -1,32 +1,21 @@
 import React, { useState } from "react";
-import { Segmented, Avatar, Descriptions, Button, Space } from "antd";
+import { Segmented, Avatar, Descriptions, Button, Space, message } from "antd";
+import { EditOutlined } from "@ant-design/icons";
 
 import { User } from "../../components";
 import styles from "../../constants/styles";
-import { useGetUserQuery } from "../../services/UserApi";
-
-const AddressTable = ({ address }) => {
-	return (
-		<Descriptions title="Address" bordered column={1}>
-			<Descriptions.Item label="Street">
-				{address.street ? address.street : "NA"}
-			</Descriptions.Item>
-			<Descriptions.Item label="State">
-				{address.state ? address.state : "NA"}
-			</Descriptions.Item>
-			<Descriptions.Item label="City">
-				{address.city ? address.city : "NA"}
-			</Descriptions.Item>
-			<Descriptions.Item label="Zipcode">
-				{address.zip ? address.zip : "NA"}
-			</Descriptions.Item>
-		</Descriptions>
-	);
-};
+import {
+	useGetUserQuery,
+	useEditUserProfileMutation,
+} from "../../services/UserApi";
 
 const PersonalInfo = () => {
+	const [edit, setEdit] = useState(false);
+	const [messageApi, contextHolder] = message.useMessage();
 	const { data, isLoading } = useGetUserQuery();
+	const [editProfile] = useEditUserProfileMutation();
 	const user = data?.user;
+	const [editData, setEditData] = useState(data?.user);
 	console.log(data, isLoading);
 	return (
 		<div className="w-full flex flex-col gap-4">
@@ -37,25 +26,137 @@ const PersonalInfo = () => {
 					</Avatar>
 				</div>
 			)}
+			<div className="w-full flex justify-end gap-2">
+				<Button
+					type="primary"
+					className="bg-[#228B22]"
+					onClick={() => {
+						if (edit) {
+							setTimeout(() => {
+								messageApi.success("Profile Updated");
+							}, 1000);
+						}
+
+						if (edit) {
+							editProfile(editData).unwrap();
+						}
+						setEdit(!edit);
+					}}
+				>
+					{edit ? "Save" : "Edit"}
+				</Button>
+				{edit && (
+					<Button
+						type="primary"
+						danger
+						className="bg-[#598392]"
+						onClick={() => {
+							setEdit(!edit);
+						}}
+					>
+						Cancel
+					</Button>
+				)}
+			</div>
 			{!isLoading && (
 				<div className="w-full flex justify-center mt-2">
 					<div className="w-full p-8 rounded-md bg-white">
 						<Descriptions title="User Info" bordered column={1}>
-							<Descriptions.Item label="UserName">
-								{user.name}
+							<Descriptions.Item label="Name">
+								{!edit ? (
+									user.name
+								) : (
+									<input
+										type="text"
+										className={
+											styles.input + " border-black"
+										}
+										value={editData?.name}
+										onChange={(e) => {
+											setEditData({
+												...editData,
+												name: e.target.value,
+											});
+										}}
+									/>
+								)}
 							</Descriptions.Item>
-							<Descriptions.Item label="User Bio">
-								{user.bio ? user.bio : "NA"}
-							</Descriptions.Item>
+							{user.bio && (
+								<Descriptions.Item label="User Bio">
+									{!edit ? (
+										user.bio
+									) : (
+										<input
+											type="text"
+											className={
+												styles.input + " border-black"
+											}
+											value={editData?.bio}
+											onChange={(e) => {
+												setEditData({
+													...editData,
+													bio: e.target.value,
+												});
+											}}
+										/>
+									)}
+								</Descriptions.Item>
+							)}
 							<Descriptions.Item label="Email ID">
-								{user.email}
+								{!edit ? (
+									user.email
+								) : (
+									<input
+										type="text"
+										className={
+											styles.input + " border-black"
+										}
+										value={editData.email}
+										onChange={(e) => {
+											setEditData({
+												...editData,
+												email: e.target.value,
+											});
+										}}
+									/>
+								)}
 							</Descriptions.Item>
 							<Descriptions.Item label="Telephone">
-								{user.phone ? user.phone : "NA"}
+								{!edit ? (
+									user.phone
+								) : (
+									<input
+										type="text"
+										className={styles.input}
+										value={editData.phone}
+										onChange={(e) => {
+											setEditData({
+												...editData,
+												phone: e.target.value,
+											});
+										}}
+									/>
+								)}
 							</Descriptions.Item>
-							<Descriptions.Item label="Address">
-								<AddressTable address={user.address} />
-							</Descriptions.Item>
+							{user.address && (
+								<Descriptions.Item label="Address">
+									{!edit ? (
+										user.address
+									) : (
+										<input
+											type="text"
+											className={styles.input}
+											value={editData.address}
+											onChange={(e) => {
+												setEditData({
+													...editData,
+													address: e.target.value,
+												});
+											}}
+										/>
+									)}
+								</Descriptions.Item>
+							)}
 							<Descriptions.Item label="Screens Alloted">
 								{user.screenLimit}
 							</Descriptions.Item>
@@ -143,7 +244,7 @@ const AccountSettings = () => {
 									block
 									className="bg-[#598392]"
 								>
-									Login
+									Change Password
 								</Button>
 							</Space>
 						</div>

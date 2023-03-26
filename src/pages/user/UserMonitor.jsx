@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Table, Tag, message, Button, Space, Modal, Input } from "antd";
+import { Table, Tag, message, Button, Space, Modal, Input, Spin } from "antd";
+import {
+	AiFillEye,
+	AiFillEyeInvisible,
+	AiFillCopy,
+	AiOutlineLink,
+} from "react-icons/ai";
 
 import { User } from "../../components";
 import {
@@ -7,13 +13,17 @@ import {
 	useAddMonitorMutation,
 } from "../../services/UserMonitorApi";
 import { useGetUserQuery } from "../../services/UserApi";
+import { useGetAllDocumentsQuery } from "../../services/UserMediaApi";
 
 const Monitors = () => {
 	const [addMonitor] = useAddMonitorMutation();
-	const { data } = useGetUserMonitorQuery();
+	const { data, iSLoading: monitorsLoading } = useGetUserMonitorQuery();
 	const { data: userData, isLoading } = useGetUserQuery();
+	const { data: mediaData, isLoading: mediaLoading } =
+		useGetAllDocumentsQuery();
 	const users = data?.screens;
 	const user = userData?.user;
+	const documents = mediaData?.documents;
 	const [messageApi, contextHolder] = message.useMessage();
 	const [showPassword, setShowPassword] = useState([]);
 	const [count, setCount] = useState(0);
@@ -53,42 +63,46 @@ const Monitors = () => {
 			key: "password",
 			render: (text, record, index) => {
 				return (
-					<div>
+					<div className="flex gap-2 items-center">
 						{showPassword[index] ? (
 							<Tag color="green">{text}</Tag>
 						) : (
 							<Tag color="blue">********</Tag>
 						)}
-						<Tag
-							color="red"
-							className="cursor-pointer"
-							onClick={() => {
-								let temp = [...showPassword];
-								temp[index] = !temp[index];
-								setShowPassword(temp);
-							}}
-						>
-							{showPassword[index] ? "Hide" : "Show"}
-						</Tag>
-						{contextHolder}
-						{showPassword[index] && (
-							<Tag
-								color="blue"
-								className="cursor-pointer"
+						{showPassword[index] ? (
+							<AiFillEyeInvisible
 								onClick={() => {
-									navigator.clipboard.writeText(text);
-									showMessage("Password Copied");
+									let temp = [...showPassword];
+									temp[index] = !temp[index];
+									setShowPassword(temp);
 								}}
-							>
-								Copy
-							</Tag>
+								className="text-xl cursor-pointer text-gray-500"
+							/>
+						) : (
+							<AiFillEye
+								onClick={() => {
+									let temp = [...showPassword];
+									temp[index] = !temp[index];
+									setShowPassword(temp);
+								}}
+								className="text-xl cursor-pointer text-gray-500"
+							/>
 						)}
+						{contextHolder}
+
+						<AiFillCopy
+							className="cursor-pointer text-xl text-gray-500"
+							onClick={() => {
+								navigator.clipboard.writeText(text);
+								showMessage("Password Copied");
+							}}
+						/>
 					</div>
 				);
 			},
 		},
 		{
-			title: "Current Status",
+			title: "Media Status",
 			dataIndex: "isPlaying",
 			key: "isPlaying",
 			render: (text) => {
@@ -104,9 +118,49 @@ const Monitors = () => {
 			},
 		},
 		{
+			title: "Device Status",
+			dataIndex: "status",
+			key: "status",
+			render: (text) => {
+				return (
+					<div>
+						{text === "active" ? (
+							<Tag color="green">ONLINE</Tag>
+						) : (
+							<Tag color="red">OFFILNE</Tag>
+						)}
+					</div>
+				);
+			},
+		},
+		{
 			title: "Media Playing / Last Played",
 			dataIndex: "document",
 			key: "document",
+			render: (text) => {
+				return (
+					<div className="flex gap-4">
+						{documents?.map((doc) => {
+							if (doc._id === text) {
+								return (
+									<div>
+										<p>{doc.name}</p>
+									</div>
+								);
+							}
+						})}
+						<AiOutlineLink
+							className="cursor-pointer text-xl text-blue-500"
+							onClick={() => {
+								window.open(
+									documents?.find((doc) => doc._id === text)
+										.link,
+								);
+							}}
+						/>
+					</div>
+				);
+			},
 		},
 	];
 	//fill data of showpassword with length of users with false
@@ -189,12 +243,18 @@ const Monitors = () => {
 			</div>
 
 			<div>
-				<Table
-					columns={columns}
-					dataSource={data?.screens}
-					pagination={{ pageSize: 5, position: ["bottomCenter"] }}
-					scroll={{ x: 240 }}
-				/>
+				{!monitorsLoading ? (
+					<Table
+						columns={columns}
+						dataSource={data?.screens}
+						pagination={{ pageSize: 5, position: ["bottomCenter"] }}
+						scroll={{ x: 240 }}
+					/>
+				) : (
+					<div className="w-full flex justify-center items-center">
+						<Spin size="large" />;
+					</div>
+				)}
 			</div>
 		</div>
 	);

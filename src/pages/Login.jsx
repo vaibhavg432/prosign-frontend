@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { Button, Space, message } from "antd";
+import { useDispatch } from "react-redux";
+import { Button, Space, message, Modal } from "antd";
 import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 
@@ -11,16 +11,17 @@ import { useLoginMutation } from "../services/AuthApi";
 import { userLogin, adminLogin } from "../features/Login";
 
 const Login = () => {
+	const [isOpen, setIsOpen] = useState(false);
 	const [messageApi, contextHolder] = message.useMessage();
-	// eslint-disable-next-line
-	const userLog = useSelector((state) => state.auth.userLoggedIn);// eslint-disable-next-line
-	const adminLog = useSelector((state) => state.auth.adminLoggedIn);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const [login] = useLoginMutation();
 	const [form, setForm] = useState({
 		email: "",
 		password: "",
+	});
+	const [resetForm, setResetForm] = useState({
+		email: "",
 	});
 	const color = COLORS;
 	const error = (text) => {
@@ -47,10 +48,16 @@ const Login = () => {
 			localStorage.setItem("token", data.token);
 			if (data.role === "admin") {
 				localStorage.setItem("admin", true);
+				if (localStorage.getItem("user")) {
+					localStorage.removeItem("user");
+				}
 				dispatch(adminLogin());
 				navigate("/admin");
 			} else if (data.role === "user") {
 				localStorage.setItem("user", true);
+				if (localStorage.getItem("admin")) {
+					localStorage.removeItem("admin");
+				}
 				dispatch(userLogin());
 				navigate("/user");
 			}
@@ -110,7 +117,46 @@ const Login = () => {
 										})
 									}
 								/>
+								{/* //forgot Password */}
+								<h1
+									className="text-sm text-gray-600 mt-2 cursor-pointer"
+									onClick={() => setIsOpen(true)}
+								>
+									Forgot Password ?{" "}
+								</h1>
 							</div>
+							<Modal
+								title="Forgot Password"
+								visible={isOpen}
+								onCancel={() => setIsOpen(false)}
+								footer={null}
+							>
+								<div className="w-full py-8">
+									<label className={styles.label}>
+										Email*
+									</label>
+									<input
+										type="email"
+										className={styles.input}
+										placeholder="Enter your email"
+										value={resetForm.email}
+										onChange={(e) =>
+											setResetForm({
+												...resetForm,
+												email: e.target.value,
+											})
+										}
+									/>
+									<div className="w-full flex justify-between items-center mt-4">
+										<Button
+											type="primary"
+											className="bg-[#598392]"
+										>
+											Send Mail
+										</Button>
+									</div>
+								</div>
+							</Modal>
 							<div>
 								<Space
 									direction="vertical"

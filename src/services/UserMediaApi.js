@@ -20,6 +20,13 @@ export const userMediaApi = createApi({
 			query: () => "documents",
 			providesTags: (result) => (result ? ["UserMedia"] : ["UserMedia"]),
 		}),
+		getOneDocument: builder.query({
+			query: (documentId) => ({
+				url: `document/${documentId}`,
+				method: "GET",
+			}),
+			providesTags: (result) => (result ? ["UserMedia"] : ["UserMedia"]),
+		}),
 		deleteOneDocument: builder.mutation({
 			query: (documentId) => ({
 				url: "delete-document",
@@ -28,9 +35,21 @@ export const userMediaApi = createApi({
 			}),
 			invalidatesTags: ["UserMedia"],
 		}),
+		updateOneDocument: builder.mutation({
+			query: (body) => ({
+				url: "update-document",
+				method: "PATCH",
+				body: body,
+			}),
+			invalidatesTags: ["UserMedia"],
+		}),
 	}),
 });
 
-export const { useGetAllDocumentsQuery, useDeleteOneDocumentMutation } =
-	userMediaApi;
+export const {
+	useGetAllDocumentsQuery,
+	useGetOneDocumentQuery,
+	useDeleteOneDocumentMutation,
+	useUpdateOneDocumentMutation,
+} = userMediaApi;
 export default userMediaApi;

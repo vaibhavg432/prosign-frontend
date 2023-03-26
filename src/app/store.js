@@ -1,5 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { authApi, userMediaApi, userMonitorApi, userApi } from "../services";
+import {
+	authApi,
+	userMediaApi,
+	userMonitorApi,
+	userApi,
+	adminApi,
+} from "../services";
 import authReducer from "../features/Login";
 
 export const store = configureStore({
@@ -8,6 +14,7 @@ export const store = configureStore({
 		[userMediaApi.reducerPath]: userMediaApi.reducer,
 		[userMonitorApi.reducerPath]: userMonitorApi.reducer,
 		[userApi.reducerPath]: userApi.reducer,
+		[adminApi.reducerPath]: adminApi.reducer,
 		auth: authReducer,
 	},
 	middleware: (getDefaultMiddleware) =>
@@ -15,6 +22,7 @@ export const store = configureStore({
 			authApi.middleware,
 			userMediaApi.middleware,
 			userMonitorApi.middleware,
-			userApi.middleware
+			userApi.middleware,
+			adminApi.middleware,
 		),
 });

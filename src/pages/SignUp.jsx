@@ -33,13 +33,17 @@ const SignUp = () => {
 	};
 	const onSubmit = async (e) => {
 		e.preventDefault();
-		const data = await register(form);
+		const { data } = await register(form);
+		if (!data.success) {
+			error(data.message);
+			return;
+		} else {
+			success(data.message);
+			setTimeout(() => {
+				navigate("/login");
+			}, 2000);
+		}
 		console.log(data);
-		// if (!data.success) {
-		// 	error(data.message);
-		// } else {
-		// 	success(data.message);
-		// }
 	};
 	return (
 		<div className={`w-full h-[100vh] flex ${color.primary}`}>

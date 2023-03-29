@@ -10,31 +10,26 @@ import {
 	Spin,
 } from "antd";
 import { AiOutlineLink } from "react-icons/ai";
+import { UploadOutlined } from "@ant-design/icons";
 
 import { User } from "../../components";
-import { styles } from "../../constants";
 import {
 	useGetAllDocumentsQuery,
+	useUploadOneDocumentMutation,
 	useDeleteOneDocumentMutation,
 	useUpdateOneDocumentMutation,
 } from "../../services/UserMediaApi";
 
 const Media = () => {
 	const [messageApi, contextHolder] = message.useMessage();
-	const formData = new FormData();
+	const [file, setFile] = useState(null);
 	const { data, isLoading } = useGetAllDocumentsQuery();
-
+	const [uploadOneDocument] = useUploadOneDocumentMutation();
 	const [deleteOneDocument] = useDeleteOneDocumentMutation();
 	const [updateOneDocument] = useUpdateOneDocumentMutation();
 	const [documentName, setDocumentName] = useState("");
 	const [documentEdit, setDocumentEdit] = useState(-1);
-	const [uploadDocument, setUploadDocument] = useState({
-		name: "",
-		file: "",
-	});
-
 	const documents = data?.documents;
-	const { Dragger } = Upload;
 	const showMessage = (text) => {
 		messageApi.open({
 			type: "success",
@@ -83,7 +78,6 @@ const Media = () => {
 			render: (text) => {
 				return (
 					<div className="flex gap-4 items-center">
-						<img src={text} alt="media" className="w-12 h-12" />
 						<AiOutlineLink
 							className="cursor-pointer text-2xl text-blue-500"
 							onClick={() => {
@@ -177,28 +171,6 @@ const Media = () => {
 			},
 		},
 	];
-	const props = {
-		name: uploadDocument.name,
-		multiple: false,
-		action: uploadDocument.link,
-		onChange(info) {
-			const { status } = info.file;
-			if (status !== "uploading") {
-				console.log(info.file);
-			}
-			if (status === "done") {
-				message.success(
-					`${info.file.name} file uploaded successfully.`,
-				);
-			} else if (status === "error") {
-				message.error(`${info.file.name} file upload failed.`);
-			}
-		},
-
-		onDrop(e) {
-			console.log("Dropped files", e.dataTransfer.files);
-		},
-	};
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	return (
 		<div className="w-full py-4">
@@ -223,40 +195,36 @@ const Media = () => {
 							closable={true}
 						>
 							<div className="w-full flex flex-col gap-4">
-								<div>
-									<label className={styles.label}>
-										Name of Document*
-									</label>
-									<input
-										type="text"
-										placeholder="Enter document name"
-										className={styles.input}
-										value={uploadDocument.name}
-										onChange={(e) => {
-											setUploadDocument({
-												...uploadDocument,
-												name: e.target.value,
-											});
-										}}
-									/>
-								</div>
-								<input
-									type="file"
-									className={styles.input}
-									value={uploadDocument.file}
-									onChange={(e) => {
-										setUploadDocument({
-											...uploadDocument,
-											file: e.target.value,
-										});
+								{/* Input file using antd upload */}
+								<Upload
+									name="file"
+									listType="picture"
+									className="w-full"
+									showUploadList={true}
+									beforeUpload={(file) => {
+										setFile(file);
+										return false;
 									}}
-								/>
+
+								>
+									<Button icon={<UploadOutlined />}>
+										Click to Upload
+									</Button>
+								</Upload>
+								{/* Input file using antd upload */}
 								<Button
 									type="primary"
 									className="bg-[#598392]"
 									onClick={() => {
-										console.log(uploadDocument);
-										setIsModalVisible(false);
+										console.log(file);
+										if (file) {
+											const formData = new FormData();
+											formData.append("data", file);
+											uploadOneDocument(formData);
+											setIsModalVisible(false);
+											setFile(null);
+											showMessage("Document uploaded");
+										}
 									}}
 								>
 									Upload

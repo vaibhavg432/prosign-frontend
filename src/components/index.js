@@ -5,3 +5,4 @@ export { default as UserNavbar } from "./UserNavbar";
 export { default as AdminNavbar } from "./AdminNavbar";
 export { default as User } from "./User";
 export { default as Admin } from "./Admin";
+export { default as StatusCard } from "./StatusCard";

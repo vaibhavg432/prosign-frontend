@@ -27,6 +27,16 @@ export const userMediaApi = createApi({
 			}),
 			providesTags: (result) => (result ? ["UserMedia"] : ["UserMedia"]),
 		}),
+
+		// upload file using formdata in file
+		uploadOneDocument: builder.mutation({
+			query: (file) => ({
+				url: "upload-document",
+				method: "POST",
+				body: file,
+			}),
+			invalidatesTags: ["UserMedia"],
+		}),
 		deleteOneDocument: builder.mutation({
 			query: (documentId) => ({
 				url: "delete-document",
@@ -49,6 +59,7 @@ export const userMediaApi = createApi({
 export const {
 	useGetAllDocumentsQuery,
 	useGetOneDocumentQuery,
+	useUploadOneDocumentMutation,
 	useDeleteOneDocumentMutation,
 	useUpdateOneDocumentMutation,
 } = userMediaApi;

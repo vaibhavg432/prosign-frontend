@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
+import logo from "../assets/images/logo.jpg";
 import { userLinks } from "../constants/data";
 import { styles } from "../constants";
 
@@ -10,12 +11,16 @@ const UserNavbar = () => {
 
 	return (
 		<div className="w-full py-12 h-[100vh] shadow-xl">
-			<div className="w-full flex flex-col items-center gap-4">
+			<div className="w-full flex flex-col justify-center items-center gap-4">
 				<h1
 					className="text-center cursor-pointer"
 					onClick={() => navigate("/")}
 				>
-					Company
+					<img
+						src={logo}
+						alt="logo"
+						className="w-[100px] h-[100px] rounded-md"
+					/>
 				</h1>
 				<div className="w-[90%] h-[1px] bg-gray-400"></div>
 			</div>

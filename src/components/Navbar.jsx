@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import { navLinks } from "../constants/data";
+import { COLORS as color } from "../constants";
 import { userLogin, adminLogin, logout } from "../features/Login";
 
 const Navbar = () => {
@@ -29,7 +30,7 @@ const Navbar = () => {
 	return (
 		<div className="w-full flex justify-between bg-white px-8 py-4 items-center shadow-2xl">
 			<div className="w-2/12 flex justify-center items-center">
-				<h1>Company</h1>
+				<h1 className = "font-bold text-2xl">Digi Signs</h1>
 			</div>
 			<ul className="w-8/12 justify-center flex gap-8 items-center">
 				{navLinks.map((link, index) => (
@@ -48,7 +49,8 @@ const Navbar = () => {
 						<Button
 							type="primary"
 							block
-							className="bg-[#598392]"
+							danger
+							className={`${color.btnPrimary}`}
 							onClick={() => navigate("/login")}
 						>
 							Login
@@ -57,7 +59,8 @@ const Navbar = () => {
 						<Button
 							type="primary"
 							block
-							className="bg-[#598392]"
+							danger
+							className={`${color.btnPrimary}`}
 							onClick={() => navigate("/user")}
 						>
 							Dashboard
@@ -66,7 +69,8 @@ const Navbar = () => {
 						<Button
 							type="primary"
 							block
-							className="bg-[#598392]"
+							danger
+							className={`${color.btnPrimary}`}
 							onClick={() => navigate("/admin")}
 						>
 							Dashboard

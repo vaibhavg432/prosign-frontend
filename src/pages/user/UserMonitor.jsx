@@ -36,7 +36,8 @@ const Monitors = () => {
 						<Button
 							type="primary"
 							block
-							className="bg-[#598392]"
+							// className="bg-[#598392]"
+							danger
 							onClick={() => setIsOpen(true)}
 						>
 							Add Monitor User

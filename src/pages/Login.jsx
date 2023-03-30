@@ -150,7 +150,8 @@ const Login = () => {
 									<div className="w-full flex justify-between items-center mt-4">
 										<Button
 											type="primary"
-											className="bg-[#598392]"
+											danger
+											className={`${color.btnPrimary}`}
 										>
 											Send Mail
 										</Button>
@@ -165,8 +166,9 @@ const Login = () => {
 									{contextHolder}
 									<Button
 										type="primary"
+										danger
 										block
-										className="bg-[#598392]"
+										className={`${color.btnPrimary}`}
 										onClick={onSubmit}
 									>
 										Login

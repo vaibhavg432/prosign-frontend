@@ -5,6 +5,7 @@ import {
 	userMonitorApi,
 	userApi,
 	adminApi,
+	playlistApi,
 } from "../services";
 import authReducer from "../features/Login";
 
@@ -15,6 +16,7 @@ export const store = configureStore({
 		[userMonitorApi.reducerPath]: userMonitorApi.reducer,
 		[userApi.reducerPath]: userApi.reducer,
 		[adminApi.reducerPath]: adminApi.reducer,
+		[playlistApi.reducerPath]: playlistApi.reducer,
 		auth: authReducer,
 	},
 	middleware: (getDefaultMiddleware) =>
@@ -24,5 +26,6 @@ export const store = configureStore({
 			userMonitorApi.middleware,
 			userApi.middleware,
 			adminApi.middleware,
+			playlistApi.middleware
 		),
 });

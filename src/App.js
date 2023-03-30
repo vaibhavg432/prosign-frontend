@@ -11,6 +11,7 @@ import {
 	UserMonitor,
 	UserSchedule,
 	UserProfile,
+	UserPlaylist
 } from "./pages/user";
 import {
 	AdminDashboard,
@@ -49,6 +50,7 @@ const App = () => {
 				<Route path="/user/media" element={userLog ? <UserMedia /> : <NotAccess />} />
 				<Route path="/user/schedule" element={userLog ? <UserSchedule /> : <NotAccess />} />
 				<Route path="/user/profile" element={userLog ? <UserProfile /> : <NotAccess />} />
+				<Route path="/user/playlists" element={userLog ? <UserPlaylist /> : <NotAccess />} />
 				
 				<Route path="/admin" element={adminLog ? <AdminDashboard /> : <NotAccess/>} />
 				<Route path="/admin/users" element={adminLog ? <AdminUsers /> : <NotAccess/>} />

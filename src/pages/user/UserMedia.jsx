@@ -10,8 +10,13 @@ import {
 	Spin,
 } from "antd";
 import { AiOutlineLink } from "react-icons/ai";
-import { UploadOutlined } from "@ant-design/icons";
+import {
+	UploadOutlined,
+	DeleteOutlined,
+	SaveOutlined,
+} from "@ant-design/icons";
 
+import { COLORS as color } from "../../constants";
 import { User } from "../../components";
 import {
 	useGetAllDocumentsQuery,
@@ -57,17 +62,38 @@ const Media = () => {
 			key: "name",
 			render: (text, record, index) => {
 				return documentEdit === index ? (
-					<input
-						value={documentName}
-						type="text"
-						placeholder="Enter document name"
-						className="border-2 border-[#598392] rounded-md p-2"
-						onChange={(e) => {
-							setDocumentName(e.target.value);
-						}}
-					/>
+					<div className="w-full flex gap-4 items-center">
+						<input
+							value={documentName}
+							type="text"
+							placeholder="Enter document name"
+							className="border-2 border-[#598392] rounded-md p-2"
+							onChange={(e) => {
+								setDocumentName(e.target.value);
+							}}
+						/>
+						<SaveOutlined
+							className="text-xl text-blue-500 cursor-pointer"
+							onClick={() => {
+								updateOneDocument({
+									documentId: record._id,
+									name: documentName,
+								});
+								setDocumentEdit(-1);
+								setDocumentName("");
+								showMessage("Document updated");
+							}}
+						/>
+					</div>
 				) : (
-					text
+					<h1
+						onClick={() => {
+							setDocumentEdit(index);
+							setDocumentName(text);
+						}}
+					>
+						{text}
+					</h1>
 				);
 			},
 		},
@@ -79,7 +105,7 @@ const Media = () => {
 				return (
 					<div className="flex gap-4 items-center">
 						<AiOutlineLink
-							className="cursor-pointer text-2xl text-blue-500"
+							className="cursor-pointer text-2xl text-green-500"
 							onClick={() => {
 								window.open(text);
 							}}
@@ -106,8 +132,8 @@ const Media = () => {
 						{contextHolder}
 						<Popconfirm
 							title="Are you sure to delete this document?"
-							onConfirm={() => {
-								deleteOneDocument(record._id);
+							onConfirm={async () => {
+								const res = await deleteOneDocument(record._id);
 								messageApi.success(
 									"Document deleted successfully",
 								);
@@ -119,53 +145,10 @@ const Media = () => {
 							cancelText="No"
 							okButtonProps={{ danger: true }}
 						>
-							<Button type="primary" className="bg-[#598392]">
-								Delete
-							</Button>
+							<DeleteOutlined
+								className={`text-xl ${color.hoverIconSecondary}`}
+							/>
 						</Popconfirm>
-						{documentEdit === index ? (
-							<div className="flex gap-2">
-								<Button
-									type="primary"
-									className="bg-[#228B22]"
-									onClick={() => {
-										updateOneDocument({
-											documentId: record._id,
-											name: documentName,
-										});
-										setDocumentEdit(-1);
-										setDocumentName("");
-										showMessage("Document updated");
-									}}
-								>
-									Save
-								</Button>
-								<Button
-									type="primary"
-									danger
-									className="bg-[#598392]"
-									onClick={() => {
-										setDocumentEdit(-1);
-										setDocumentName("");
-										showError("Document not updated");
-									}}
-								>
-									Cancel
-								</Button>
-							</div>
-						) : (
-							<Button
-								type="primary"
-								danger
-								className="bg-[#598392]"
-								onClick={() => {
-									setDocumentName(record.name);
-									setDocumentEdit(index);
-								}}
-							>
-								Edit
-							</Button>
-						)}
 					</div>
 				);
 			},
@@ -180,8 +163,9 @@ const Media = () => {
 					<Space direction="vertical" style={{ width: "100%" }}>
 						<Button
 							type="primary"
+							danger
 							block
-							className="bg-[#598392]"
+							className={`${color.btnPrimary}`}
 							onClick={() => setIsModalVisible(true)}
 						>
 							Add Media
@@ -205,7 +189,6 @@ const Media = () => {
 										setFile(file);
 										return false;
 									}}
-
 								>
 									<Button icon={<UploadOutlined />}>
 										Click to Upload
@@ -214,7 +197,8 @@ const Media = () => {
 								{/* Input file using antd upload */}
 								<Button
 									type="primary"
-									className="bg-[#598392]"
+									danger
+									className={`${color.btnPrimary}`}
 									onClick={() => {
 										console.log(file);
 										if (file) {

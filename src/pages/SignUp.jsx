@@ -126,7 +126,7 @@ const SignUp = () => {
 								<Button
 									type="primary"
 									block
-									className="bg-[#598392]"
+									danger
 									onClick={onSubmit}
 								>
 									Register

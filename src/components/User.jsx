@@ -1,10 +1,8 @@
 import React from "react";
 import { Dropdown, Space } from "antd";
 import { AiOutlineDown, AiOutlineMenu } from "react-icons/ai";
-import { MdSpaceDashboard, MdPermMedia, MdMonitor } from "react-icons/md";
 import { CgProfile, CgLogOut } from "react-icons/cg";
-import { FaUsers, FaUserAlt, FaBusinessTime } from "react-icons/fa";
-import { IoSettingsSharp } from "react-icons/io5";
+import { FaUsers, FaUserAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 import { UserNavbar } from "../components";
@@ -68,55 +66,6 @@ const User = ({ name, Component }) => {
 			),
 		});
 	}
-	// 	{
-	// 		key: "1",
-	// 		label: (
-	// 			<div
-	// 				className="flex items-center gap-2"
-	// 				onClick={() => navigate("/user")}
-	// 			>
-	// 				<MdSpaceDashboard />
-	// 				Dashboard
-	// 			</div>
-	// 		),
-	// 	},
-	// 	{
-	// 		key: "1",
-	// 		label: (
-	// 			<div
-	// 				className="flex items-center gap-2"
-	// 				onClick={() => navigate("/user/media")}
-	// 			>
-	// 				<MdPermMedia />
-	// 				Media
-	// 			</div>
-	// 		),
-	// 	},
-	// 	{
-	// 		key: "1",
-	// 		label: (
-	// 			<div
-	// 				className="flex items-center gap-2"
-	// 				onClick={() => navigate("/user/monitors")}
-	// 			>
-	// 				<MdMonitor />
-	// 				Monitors
-	// 			</div>
-	// 		),
-	// 	},
-	// 	{
-	// 		key: "1",
-	// 		label: (
-	// 			<div
-	// 				className="flex items-center gap-2"
-	// 				onClick={() => navigate("/user/schedule")}
-	// 			>
-	// 				<FaBusinessTime />
-	// 				Schedule
-	// 			</div>
-	// 		),
-	// 	},
-	// ];
 	return (
 		<div className={`${color.primary} w-full flex`}>
 			<div className="sm:w-2/12 sm:flex hidden flex-col gap-4 fixed bg-white">

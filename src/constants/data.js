@@ -1,7 +1,7 @@
-import { MdSpaceDashboard, MdPermMedia, MdMonitor } from "react-icons/md";
+import { MdSpaceDashboard, MdPermMedia, MdMonitor,MdFeaturedPlayList } from "react-icons/md";
 import { FaBusinessTime } from "react-icons/fa";
 
-export const apiUrl = "https://prosign-backend.onrender.com/api/";
+export const apiUrl = "http://localhost:5000/api/";
 
 const styles = {
 	icon: "text-[#black] text-[20px] font-medium",
@@ -27,7 +27,11 @@ export const userLinks = [
 		name: "Schedule",
 		link: "/user/schedule",
 		icon: <FaBusinessTime className={styles.icon} />,
-	},
+	},{
+		name : "Playlists",
+		link : "/user/playlists",
+		icon : <MdFeaturedPlayList className={styles.icon} />
+	}
 ];
 
 export const adminLinks = [

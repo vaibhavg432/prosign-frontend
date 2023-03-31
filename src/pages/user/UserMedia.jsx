@@ -224,7 +224,7 @@ const Media = () => {
 				<Table
 					columns={columns}
 					dataSource={documents}
-					pagination={{ pageSize: 5, position: ["bottomCenter"] }}
+					pagination={{ pageSize: 15, position: ["bottomCenter"] }}
 					scroll={{ x: 240 }}
 				/>
 			) : (

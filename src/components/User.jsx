@@ -51,8 +51,8 @@ const User = ({ name, Component }) => {
 		},
 	];
 
-	const userNav = []
-	for(let i = 0; i < userLinks.length; i++) {
+	const userNav = [];
+	for (let i = 0; i < userLinks.length; i++) {
 		userNav.push({
 			key: i,
 			label: (
@@ -89,7 +89,7 @@ const User = ({ name, Component }) => {
 			>
 				<div className="w-full flex justify-between">
 					<div>
-						<h1 className="text-2xl font-light">{name}</h1>
+						<h1 className="text-xl font-bold text-red-700">{name}</h1>
 					</div>
 					<div>
 						<Dropdown

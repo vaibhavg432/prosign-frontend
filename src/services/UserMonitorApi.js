@@ -5,7 +5,7 @@ export const userMonitorApi = createApi({
 	reducerPath: "userMonitorApi",
 	tagTypes: ["UserMonitor"],
 	baseQuery: fetchBaseQuery({
-		baseUrl: apiUrl + "user/",
+		baseUrl: apiUrl + "screen-group/",
 		prepareHeaders: (headers, { getState }) => {
 			//get token from localStorage
 			const token = localStorage.getItem("token");
@@ -42,10 +42,59 @@ export const userMonitorApi = createApi({
 			}),
 			invalidatesTags: ["UserMonitor"],
 		}),
+		playPlaylistOnMixedScreens: builder.mutation({
+			query: (body) => ({
+				url: "play-playlist-mixed-screens",
+				method: "POST",
+				body: body,
+			}),
+			invalidatesTags: ["UserMonitor"],
+		}),
 		stopAllScreens: builder.mutation({
 			query: () => ({
 				url: "stop-document-all-screens",
 				method: "POST",
+			}),
+			invalidatesTags: ["UserMonitor"],
+		}),
+		stopPlayListOneScreen: builder.mutation({
+			query: (id) => ({
+				url: `stop-playlist-one-screen/${id}`,
+				method: "POST",
+			}),
+			invalidatesTags: ["UserMonitor"],
+		}),
+		stopPlayListOneGroup: builder.mutation({
+			query: (id) => ({
+				url: `stop-playlist-one-group/${id}`,
+				method: "POST",
+			}),
+			invalidatesTags: ["UserMonitor"],
+		}),
+
+		//Group APIS
+		getGroupedScreens: builder.query({
+			query: () => "screen-groups",
+			providesTags: (result) =>
+				result ? ["UserMonitor"] : ["UserMonitor"],
+		}),
+		getUngroupedScreens: builder.query({
+			query: () => "ungrouped-screens",
+			providesTags: (result) =>
+				result ? ["UserMonitor"] : ["UserMonitor"],
+		}),
+		createAScreenGroup: builder.mutation({
+			query: (body) => ({
+				url: "create-screen-group",
+				method: "POST",
+				body: body,
+			}),
+			invalidatesTags: ["UserMonitor"],
+		}),
+		deleteAScreenGroup: builder.mutation({
+			query: (id) => ({
+				url: `delete-screen-group/${id}`,
+				method: "DELETE",
 			}),
 			invalidatesTags: ["UserMonitor"],
 		}),
@@ -58,5 +107,13 @@ export const {
 	useAddMonitorMutation,
 	usePlayOneDocumentOnAllScreenMutation,
 	useStopAllScreensMutation,
+	usePlayPlaylistOnMixedScreensMutation,
+	useStopPlayListOneScreenMutation,
+	useStopPlayListOneGroupMutation,
+
+	useGetGroupedScreensQuery,
+	useGetUngroupedScreensQuery,
+	useCreateAScreenGroupMutation,
+	useDeleteAScreenGroupMutation,
 } = userMonitorApi;
 export default userMonitorApi;

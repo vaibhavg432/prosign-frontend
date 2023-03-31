@@ -100,7 +100,7 @@ const Users = () => {
 				<Table
 					dataSource={users}
 					columns={columns}
-					pagination={{ pageSize: 5 }}
+					pagination={{ pageSize: 20 }}
 					expandable={{
 						expandedRowRender: (record) => (
 							<p

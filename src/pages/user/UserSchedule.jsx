@@ -1,25 +1,33 @@
 import React, { useState } from "react";
-import { Table, Tag, Select, Button, message, Popconfirm } from "antd";
+import { Table, Tag, Select, Button, message, Popconfirm, Modal } from "antd";
 import { AiOutlineLink } from "react-icons/ai";
 
 import { User } from "../../components";
 import {
 	useGetCurrentPlayingMonitorsQuery,
-	usePlayOneDocumentOnAllScreenMutation,
-	useStopAllScreensMutation,
+	useGetGroupedScreensQuery,
+	useGetUngroupedScreensQuery,
+	usePlayPlaylistOnMixedScreensMutation,
 } from "../../services/UserMonitorApi";
-
+import { useGetPlaylistsQuery } from "../../services/PlaylistApi";
 import { useGetAllDocumentsQuery } from "../../services/UserMediaApi";
 
 const Schedule = () => {
+	const { data: groupedData } = useGetGroupedScreensQuery();
+	const { data: ungroupedData } = useGetUngroupedScreensQuery();
+	const { data: playlist } = useGetPlaylistsQuery();
+	const [schedule, setSchedule] = useState(false);
+	const [selected, setSelected] = useState({
+		group: [],
+		alone: [],
+		playlist: "",
+	});
 	const [messageApi, contextHolder] = message.useMessage();
-	const [selectedDocument, setSelectedDocument] = useState("");
 	const { data } = useGetCurrentPlayingMonitorsQuery();
 	const { data: allDocuments, isLoading } = useGetAllDocumentsQuery();
+	const [playPlaylistOnMixedScreens] =
+		usePlayPlaylistOnMixedScreensMutation();
 	const documents = allDocuments?.documents;
-	const [playOneDocumentOnAllScreen] =
-		usePlayOneDocumentOnAllScreenMutation();
-	const [stopAllScreens] = useStopAllScreensMutation();
 	const current = data?.screens;
 	const columns = [
 		{
@@ -31,28 +39,22 @@ const Schedule = () => {
 			},
 		},
 		{
-			title: "Screen",
+			title: "Screen / Group",
 			dataIndex: "username",
 			key: "username",
 		},
 		{
-			title: "Media",
+			title: "Playlist Playing",
 			dataIndex: "document",
 			key: "document",
 			render: (text) => {
 				return (
 					<div className="flex gap-4 items-center">
-						{documents?.find((doc) => doc._id === text)?.name}
-
-						<AiOutlineLink
-							className="cursor-pointer text-xl text-blue-500"
-							onClick={() => {
-								window.open(
-									documents?.find((doc) => doc._id === text)
-										.link,
-								);
-							}}
-						/>
+						{
+							playlist?.playlist.find(
+								(playlist) => playlist._id === text,
+							)?.name
+						}
 					</div>
 				);
 			},
@@ -87,82 +89,140 @@ const Schedule = () => {
 			<div className="w-full mt-4">
 				<div className="w-full flex justify-between">
 					<h1 className="py-4">Current Playing Media</h1>
-					<Popconfirm
-						title="Are you sure you want to stop all screens?"
-						onConfirm={() => {
-							stopAllScreens();
-							messageApi.success({
-								content: "Stopped Playing Media",
-								duration: 2,
-							});
-						}}
-						okText="Yes"
-						okButtonProps={{ danger: true }}
-						cancelText="No"
-						onCancel={() => {
-							messageApi.success({
-								content: "Cancelled",
-								duration: 2,
-							});
-						}}
+					<Button
+						type="primary"
+						danger
+						onClick={() => setSchedule(true)}
 					>
-						<Button type="primary" className="bg-[#598392] mt-4">
-							Stop Playing
-						</Button>
-					</Popconfirm>
+						Schedule
+					</Button>
+					<Modal
+						title="Schedule Monitors"
+						visible={schedule}
+						onCancel={() => {
+							setSelected({
+								group: [],
+								alone: [],
+								playlist: "",
+							});
+							setSchedule(false);
+						}}
+						footer={null}
+					>
+						<div>
+							<div className="flex flex-col gap-4">
+								<div>
+									<label>Select Groups</label>
+									<Select
+										mode="multiple"
+										allowClear
+										style={{ width: "100%" }}
+										placeholder="Please select"
+										onChange={(value) => {
+											setSelected({
+												...selected,
+												group: value,
+											});
+										}}
+										value={selected.group}
+										options={groupedData?.screens.map(
+											(group) => {
+												return {
+													label: group.name,
+													value: group._id,
+												};
+											},
+										)}
+									/>
+								</div>
+								<div className="mt-2">
+									<label>Select Monitors</label>
+									<Select
+										mode="multiple"
+										allowClear
+										style={{ width: "100%" }}
+										placeholder="Please select"
+										onChange={(value) => {
+											setSelected({
+												...selected,
+												alone: value,
+											});
+										}}
+										value={selected.alone}
+										options={ungroupedData?.screens.map(
+											(group) => {
+												return {
+													label: group.username,
+													value: group._id,
+												};
+											},
+										)}
+									/>
+								</div>
+								<div className="mt-2">
+									<label>Select Playlist</label>
+									<Select
+										style={{ width: "100%" }}
+										placeholder="Please select"
+										onChange={(value) => {
+											setSelected({
+												...selected,
+												playlist: value,
+											});
+										}}
+										value={selected.playlist}
+										options={playlist?.playlist.map(
+											(group) => {
+												return {
+													label: group.name,
+													value: group._id,
+												};
+											},
+										)}
+									/>
+								</div>
+								<div>
+									<Button
+										type="primary"
+										danger
+										onClick={async (e) => {
+											e.preventDefault();
+											console.log(selected);
+											const { data } =
+												await playPlaylistOnMixedScreens(
+													selected,
+												);
+
+											if (data?.success) {
+												setSchedule(false);
+												setSelected({
+													group: [],
+													alone: [],
+													playlist: "",
+												});
+												messageApi.success(
+													"Playlist Scheduled Successfully",
+												);
+											} else {
+												messageApi.error(
+													"Playlist Scheduled Failed",
+												);
+											}
+										}}
+									>
+										Schedule
+									</Button>
+								</div>
+							</div>
+						</div>
+					</Modal>
 				</div>
 				<Table
 					columns={columns}
 					dataSource={current}
-					pagination={{ pageSize: 5, position: ["bottomCenter"] }}
+					pagination={{ pageSize: 15, position: ["bottomCenter"] }}
 					scroll={{ x: 240 }}
 				/>
-			</div>
-			<div className="w-full mt-4">
-				<h1 className="py-4">Play New Media</h1>
-				<div>
-					{!isLoading && (
-						<Select
-							defaultValue="Select Media"
-							value={selectedDocument}
-							onChange={(value) => {
-								setSelectedDocument(value);
-							}}
-							style={{
-								width: "100%",
-							}}
-							options={documents.map((doc) => {
-								return {
-									value: doc._id,
-									label: doc.name,
-								};
-							})}
-						/>
-					)}
-					<br />
-					{contextHolder}
-					<Button
-						type="primary"
-						className="bg-[#598392] mt-4"
-						onClick={() => {
-							if (selectedDocument === "") {
-								messageApi.error({
-									content: "Please Select a Media",
-									duration: 2,
-								});
-								return;
-							}
-							playOneDocumentOnAllScreen(selectedDocument);
-							messageApi.success({
-								content: "Playing Media",
-								duration: 2,
-							});
-							setSelectedDocument("");
-						}}
-					>
-						Play
-					</Button>
-				</div>
 			</div>
 		</div>
 	);

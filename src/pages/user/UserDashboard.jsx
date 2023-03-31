@@ -6,43 +6,47 @@ import { userLogin } from "../../features/Login";
 import { User, StatusCard } from "../../components";
 import { useGetUserQuery } from "../../services/UserApi";
 import { useGetAllDocumentsQuery } from "../../services/UserMediaApi";
-import { useGetCurrentPlayingMonitorsQuery } from "../../services/UserMonitorApi";
+import { useGetPlaylistsQuery } from "../../services/PlaylistApi";
 
 const Dashboard = () => {
 	const { data: userData } = useGetUserQuery();
 	const { data: mediaData } = useGetAllDocumentsQuery();
-	const { data: monitorData } = useGetCurrentPlayingMonitorsQuery();
+	const { data: playlistData } = useGetPlaylistsQuery();
 	const user = userData?.user;
 	const media = mediaData?.documents;
-	const monitor = monitorData?.screens;
+	const playlist = playlistData?.playlist;
 	const StatusCardData = [
 		{
-			title: "Total Number of Alloted Screen",
+			title: "Alloted Screen",
 			count: user?.screenLimit,
-			color: "bg-blue-500",
+			color: "bg-white",
+			path: "/user/monitors",
 		},
 		{
-			title: "Total Number of Active Screens",
+			title: "Active Screens",
 			count: user?.screenCount,
-			color: "bg-green-500",
+			color: "bg-white",
+			path: "/user/monitors",
 		},
 		{
-			title: "Total Media Uploaded Conut",
+			title: "Media Uploaded",
 			count: media?.length,
-			color: "bg-red-500",
+			color: "bg-white",
+			path: "/user/media",
 		},
 		{
-			title: "Total Number of Screen Playing Media",
-			count: monitor?.length,
-			color: "bg-yellow-500",
+			title: "Playlist",
+			count: playlist?.length,
+			color: "bg-white",
+			path: "/user/playlist",
 		},
 	];
 	return (
 		<div className="w-full flex flex-col gap-2">
 			<div>
-				<h1>User Statistics</h1>
+				<h1 className="font-bold text-2xl">Analytics Overview</h1>
 			</div>
-			<div className="w-full flex flex-wrap mt-8 gap-4">
+			<div className="w-full flex flex-wrap mt-2 gap-4">
 				{StatusCardData.map((data, index) => (
 					<StatusCard
 						title={data.title}
@@ -53,8 +57,8 @@ const Dashboard = () => {
 				))}
 			</div>
 			<div className="mt-8 w-full">
-				<h1>Live Monitors</h1>
-				<div className="mt-8">
+				<h1 className="font-bold text-2xl">Live Monitors</h1>
+				<div className="mt-2">
 					<MonitorTable />
 				</div>
 			</div>

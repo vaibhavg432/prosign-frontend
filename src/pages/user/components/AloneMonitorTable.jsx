@@ -1,19 +1,18 @@
 import React, { useState } from "react";
-import { Table, Tag, message } from "antd";
-import {
-	AiFillEye,
-	AiFillEyeInvisible,
-	AiFillCopy,
-	AiOutlineLink,
-} from "react-icons/ai";
+import { Table, Tag, message, Button } from "antd";
+import { AiFillEye, AiFillEyeInvisible, AiFillCopy } from "react-icons/ai";
 
 import { useGetPlaylistsQuery } from "../../../services/PlaylistApi";
-import { useGetUserMonitorQuery } from "../../../services/UserMonitorApi";
+import {
+	useGetUngroupedScreensQuery,
+	useStopPlayListOneScreenMutation,
+} from "../../../services/UserMonitorApi";
 import { useGetAllDocumentsQuery } from "../../../services/UserMediaApi";
 
-const MonitorTable = () => {
+const AloneMonitorTable = () => {
+	const [stopPlayListOneScreen] = useStopPlayListOneScreenMutation();
 	const { data: playlist } = useGetPlaylistsQuery();
-	const { data } = useGetUserMonitorQuery();
+	const { data } = useGetUngroupedScreensQuery();
 	const { data: mediaData } = useGetAllDocumentsQuery();
 	const documents = mediaData?.documents;
 	const [messageApi, contextHolder] = message.useMessage();
@@ -24,7 +23,6 @@ const MonitorTable = () => {
 			content: text,
 		});
 	};
-
 	const columns = [
 		{
 			title: "SNo.",
@@ -104,6 +102,30 @@ const MonitorTable = () => {
 			},
 		},
 		{
+			title: "Stop",
+			dataIndex: "action",
+			key: "action",
+			render: (text, record) => {
+				return (
+					<div className="flex gap-4">
+						<Button
+							type="primary"
+							danger
+							disabled={record.isPlaying === false}
+							onClick={async (e) => {
+								const { data } = stopPlayListOneScreen(
+									record._id,
+								);
+								showMessage("Stopped");
+							}}
+						>
+							Stop
+						</Button>
+					</div>
+				);
+			},
+		},
+		{
 			title: "Copy Credentials",
 			dataIndex: "copy",
 			key: "copy",
@@ -139,4 +161,4 @@ const MonitorTable = () => {
 	);
 };
 
-export default MonitorTable;
+export default AloneMonitorTable;

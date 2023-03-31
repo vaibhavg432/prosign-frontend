@@ -286,7 +286,6 @@ const ProfileAndSettings = () => {
 						value={tabValue}
 						onChange={(e) => {
 							setTabValue(e);
-							console.log(e);
 						}}
 					/>
 				</div>

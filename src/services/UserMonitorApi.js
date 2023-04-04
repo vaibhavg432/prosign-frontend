@@ -98,6 +98,13 @@ export const userMonitorApi = createApi({
 			}),
 			invalidatesTags: ["UserMonitor"],
 		}),
+		logoutScreen: builder.mutation({
+			query: (id) => ({
+				url: `logout-screen/${id}`,
+				method: "POST",
+			}),
+			invalidatesTags: ["UserMonitor"],
+		}),
 	}),
 });
 
@@ -110,6 +117,7 @@ export const {
 	usePlayPlaylistOnMixedScreensMutation,
 	useStopPlayListOneScreenMutation,
 	useStopPlayListOneGroupMutation,
+	useLogoutScreenMutation,
 
 	useGetGroupedScreensQuery,
 	useGetUngroupedScreensQuery,

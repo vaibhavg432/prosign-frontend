@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Table, Tag, message, Button } from "antd";
+import { Table, Tag, message, Button, Spin } from "antd";
 import { AiFillEye, AiFillEyeInvisible, AiFillCopy } from "react-icons/ai";
 
 import { useGetPlaylistsQuery } from "../../../services/PlaylistApi";
@@ -12,7 +12,7 @@ import { useGetAllDocumentsQuery } from "../../../services/UserMediaApi";
 const AloneMonitorTable = () => {
 	const [stopPlayListOneScreen] = useStopPlayListOneScreenMutation();
 	const { data: playlist } = useGetPlaylistsQuery();
-	const { data } = useGetUngroupedScreensQuery();
+	const { data, isLoading } = useGetUngroupedScreensQuery();
 	const { data: mediaData } = useGetAllDocumentsQuery();
 	const documents = mediaData?.documents;
 	const [messageApi, contextHolder] = message.useMessage();
@@ -152,12 +152,20 @@ const AloneMonitorTable = () => {
 		},
 	];
 	return (
-		<Table
-			columns={columns}
-			dataSource={data?.screens}
-			pagination={{ pageSize: 15, position: ["bottomCenter"] }}
-			scroll={{ x: 240 }}
-		/>
+		<div>
+			{!isLoading ? (
+				<Table
+					columns={columns}
+					dataSource={data?.screens}
+					pagination={{ pageSize: 15, position: ["bottomCenter"] }}
+					scroll={{ x: 240 }}
+				/>
+			) : (
+				<div className="w-full flex justify-center items-center h-48">
+					<Spin size="large" />
+				</div>
+			)}
+		</div>
 	);
 };
 

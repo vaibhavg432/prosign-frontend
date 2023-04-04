@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Table, Tag, message } from "antd";
+import { Table, Tag, message, Spin } from "antd";
 import {
 	AiFillEye,
 	AiFillEyeInvisible,
@@ -13,7 +13,7 @@ import { useGetAllDocumentsQuery } from "../../../services/UserMediaApi";
 
 const MonitorTable = () => {
 	const { data: playlist } = useGetPlaylistsQuery();
-	const { data } = useGetUserMonitorQuery();
+	const { data, isLoading } = useGetUserMonitorQuery();
 	const { data: mediaData } = useGetAllDocumentsQuery();
 	const documents = mediaData?.documents;
 	const [messageApi, contextHolder] = message.useMessage();
@@ -130,12 +130,20 @@ const MonitorTable = () => {
 		},
 	];
 	return (
-		<Table
-			columns={columns}
-			dataSource={data?.screens}
-			pagination={{ pageSize: 15, position: ["bottomCenter"] }}
-			scroll={{ x: 240 }}
-		/>
+		<div>
+			{!isLoading ? (
+				<Table
+					columns={columns}
+					dataSource={data?.screens}
+					pagination={{ pageSize: 15, position: ["bottomCenter"] }}
+					scroll={{ x: 240 }}
+				/>
+			) : (
+				<div className="w-full flex justify-center items-center h-48">
+					<Spin size="large" />
+				</div>
+			)}
+		</div>
 	);
 };
 

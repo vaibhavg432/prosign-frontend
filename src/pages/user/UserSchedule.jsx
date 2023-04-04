@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Table, Tag, Select, Button, message, Popconfirm, Modal } from "antd";
+import { Table, Tag, Select, Button, message, Spin, Modal } from "antd";
 import { AiOutlineLink } from "react-icons/ai";
 
 import { User } from "../../components";
@@ -23,12 +23,12 @@ const Schedule = () => {
 		playlist: "",
 	});
 	const [messageApi, contextHolder] = message.useMessage();
-	const { data } = useGetCurrentPlayingMonitorsQuery();
+	const { data, isLoading: monitorLoading } =
+		useGetCurrentPlayingMonitorsQuery();
 	const { data: allDocuments, isLoading } = useGetAllDocumentsQuery();
 	const [playPlaylistOnMixedScreens] =
 		usePlayPlaylistOnMixedScreensMutation();
 	const documents = allDocuments?.documents;
-	const current = data?.screens;
 	const columns = [
 		{
 			title: "SNo.",
@@ -217,12 +217,21 @@ const Schedule = () => {
 						</div>
 					</Modal>
 				</div>
-				<Table
-					columns={columns}
-					dataSource={current}
-					pagination={{ pageSize: 15, position: ["bottomCenter"] }}
-					scroll={{ x: 240 }}
-				/>
+				{!monitorLoading ? (
+					<Table
+						columns={columns}
+						dataSource={data?.screens}
+						pagination={{
+							pageSize: 15,
+							position: ["bottomCenter"],
+						}}
+						scroll={{ x: 240 }}
+					/>
+				) : (
+					<div className="w-full flex justify-center items-center h-48">
+						<Spin size="large" />
+					</div>
+				)}
 			</div>
 		</div>
 	);

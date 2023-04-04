@@ -1,23 +1,20 @@
-import React, { useState } from "react";
-import { Table, Tag, message, Spin } from "antd";
-import {
-	AiFillEye,
-	AiFillEyeInvisible,
-	AiFillCopy,
-	AiOutlineLink,
-} from "react-icons/ai";
+import React from "react";
+import { Table, Tag, message, Spin, Button } from "antd";
+import { AiFillCopy } from "react-icons/ai";
 
 import { useGetPlaylistsQuery } from "../../../services/PlaylistApi";
-import { useGetUserMonitorQuery } from "../../../services/UserMonitorApi";
-import { useGetAllDocumentsQuery } from "../../../services/UserMediaApi";
+import {
+	useGetUserMonitorQuery,
+	useGetGroupedScreensQuery,
+	useLogoutScreenMutation,
+} from "../../../services/UserMonitorApi";
 
 const MonitorTable = () => {
+	const [logoutScreen] = useLogoutScreenMutation();
 	const { data: playlist } = useGetPlaylistsQuery();
 	const { data, isLoading } = useGetUserMonitorQuery();
-	const { data: mediaData } = useGetAllDocumentsQuery();
-	const documents = mediaData?.documents;
+	const { data: groupedData } = useGetGroupedScreensQuery();
 	const [messageApi, contextHolder] = message.useMessage();
-	const [showPassword, setShowPassword] = useState([]);
 	const showMessage = (text) => {
 		messageApi.open({
 			type: "success",
@@ -47,6 +44,24 @@ const MonitorTable = () => {
 				return (
 					<div className="flex gap-2 items-center">
 						<h1>{text}</h1>
+					</div>
+				);
+			},
+		},
+		{
+			title: "Group Associated",
+			dataIndex: "isGrouped",
+			key: "isGrouped",
+			render: (text, record) => {
+				return (
+					<div>
+						{text
+							? groupedData?.screens?.map((group) => {
+									if (group._id === record.groupId) {
+										return group.name;
+									}
+							  })
+							: "Not Grouped"}
 					</div>
 				);
 			},
@@ -124,6 +139,41 @@ const MonitorTable = () => {
 								showMessage("Password Copied");
 							}}
 						/>
+					</div>
+				);
+			},
+		},
+		{
+			title: "Logout",
+			dataIndex: "logout",
+			key: "logout",
+			render: (text, record, index) => {
+				return (
+					<div>
+						<Button
+							type="primary"
+							danger
+							disabled={record.status === "inactive"}
+							onClick={async (e) => {
+								await logoutScreen(record._id)
+									.then((res) => {
+										if (res.data) {
+											messageApi.open({
+												type: "success",
+												content: "Screen Logged Out",
+											});
+										}
+									})
+									.catch((err) => {
+										messageApi.open({
+											type: "error",
+											content: "Error Logging Out Screen",
+										});
+									});
+							}}
+						>
+							Logout
+						</Button>
 					</div>
 				);
 			},

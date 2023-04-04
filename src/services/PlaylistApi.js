@@ -5,7 +5,7 @@ export const playlistApi = createApi({
 	reducerPath: "playlistApi",
 	tagTypes: ["Playlist"],
 	baseQuery: fetchBaseQuery({
-		baseUrl: apiUrl,
+		baseUrl: apiUrl + "playlist/",
 		prepareHeaders: (headers, { getState }) => {
 			const token = localStorage.getItem("token");
 			if (token) {
@@ -16,7 +16,7 @@ export const playlistApi = createApi({
 	}),
 	endpoints: (builder) => ({
 		getPlaylists: builder.query({
-			query: () => "playlist",
+			query: () => "",
 			providesTags: (result) => (result ? ["Playlist"] : ["Playlist"]),
 		}),
 		getPlaylist: builder.query({
@@ -25,23 +25,23 @@ export const playlistApi = createApi({
 		}),
 		createPlaylist: builder.mutation({
 			query: (body) => ({
-				url: "playlist",
+				url: "",
 				method: "POST",
 				body,
 			}),
 			invalidatesTags: ["Playlist"],
 		}),
 		updatePlaylist: builder.mutation({
-			query: (body) => ({
-				url: `playlist/${body.id}`,
-				method: "PUT",
+			query: (id, body) => ({
+				url: `${id}`,
+				method: "PATCH",
 				body,
 			}),
 			invalidatesTags: ["Playlist"],
 		}),
 		deletePlaylist: builder.mutation({
 			query: (id) => ({
-				url: `playlist/${id}`,
+				url: `${id}`,
 				method: "DELETE",
 			}),
 			invalidatesTags: ["Playlist"],

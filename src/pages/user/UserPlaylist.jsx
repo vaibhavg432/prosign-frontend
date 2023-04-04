@@ -1,7 +1,15 @@
 import React, { useState } from "react";
-import { Button, Table, Select, Modal, message, Popconfirm } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
-
+import {
+	Button,
+	Table,
+	Select,
+	Modal,
+	message,
+	Descriptions,
+	Spin,
+	Popconfirm,
+} from "antd";
+import { AiOutlineMore } from "react-icons/ai";
 import { styles } from "../../constants";
 import { useGetAllDocumentsQuery } from "../../services/UserMediaApi";
 import {
@@ -13,16 +21,19 @@ import {
 import { User } from "../../components";
 
 const Playlist = () => {
+	const [loading, setLoading] = useState(false);
+	const [view, setView] = useState(false);
+	const [edit, setEdit] = useState(false);
+	const [editPlaylist, setEditPlaylist] = useState({});
+	const [selectedPlaylist, setSelectedPlaylist] = useState({});
+
 	const [messageApi, contextHolder] = message.useMessage();
 	const [newPlaylist, setNewPlaylist] = useState({
 		name: "",
 		documents: [],
 	});
 	const [adding, setAdding] = useState(false);
-	const [moreModal, setMoreModal] = useState(false);
-	const [edit, setEdit] = useState(false);
-	const [selectedPlaylist, setSelectedPlaylist] = useState({});
-	const [editPlaylist, setEditPlaylist] = useState({});
+
 	const [updatePlaylist] = useUpdatePlaylistMutation();
 	const [deletePlaylist] = useDeletePlaylistMutation();
 	const [createPlaylist] = useCreatePlaylistMutation();
@@ -77,34 +88,14 @@ const Playlist = () => {
 			render: (text, record, index) => {
 				return (
 					<div className="flex items-center gap-4">
-						{contextHolder}
-						<Popconfirm
-							title="Are you sure to delete this playlist?"
-							onConfirm={async () => {
-								const { data } = await deletePlaylist(
-									record._id,
-								);
-								console.log(data);
-								if (data.success) {
-									messageApi.success(data.message);
-								} else {
-									messageApi.error(data.message);
-								}
-							}}
-							onCancel={() => {}}
-							okButtonProps={{ danger: true }}
-						>
-							<DeleteOutlined className="text-lg cursor-pointer" />
-						</Popconfirm>
-						<h1
-							className="cursor-pointer text-blue-500 hover:text-blue-700"
+						<AiOutlineMore
+							size={20}
+							className="cursor-pointer"
 							onClick={() => {
-								setMoreModal(true);
 								setSelectedPlaylist(record);
+								setView(true);
 							}}
-						>
-							More
-						</h1>
+						/>
 					</div>
 				);
 			},
@@ -130,7 +121,9 @@ const Playlist = () => {
 						scroll={{ x: 500 }}
 					/>
 				) : (
-					<h1>Loading ...</h1>
+					<div className="w-full flex justify-center items-center h-48">
+						<Spin size="large" />
+					</div>
 				)}
 			</div>
 			<Modal
@@ -204,41 +197,137 @@ const Playlist = () => {
 					</Button>
 				</div>
 			</Modal>
-
 			<Modal
 				title="Playlist Details"
-				visible={moreModal}
+				visible={view}
 				onCancel={() => {
-					setMoreModal(false);
-					setSelectedPlaylist({});
+					setView(false);
+					setEdit(false);
 				}}
 				footer={null}
 			>
 				<div className="w-full flex flex-col gap-2">
-					<div className="w-full flex justify-end">
-						{!edit ? (
+					<div className="w-full flex justify-end mt-2 gap-4">
+						<Button
+							type="primary"
+							danger
+							onClick={async (e) => {
+								setLoading(true);
+								const { data } = await deletePlaylist(
+									selectedPlaylist._id,
+								);
+								setLoading(false);
+								if (data.success) {
+									messageApi.success(data.message);
+									setView(false);
+									setEdit(false);
+								} else {
+									messageApi.error(data.message);
+								}
+							}}
+						>
+							Delete
+						</Button>
+						<Button
+							type="primary"
+							danger
+							disabled={edit}
+							onClick={() => {
+								setEditPlaylist(selectedPlaylist);
+								setEdit(true);
+							}}
+						>
+							Edit
+						</Button>
+					</div>
+					<div>
+						<Descriptions title="Playlist Details" column={1}>
+							<Descriptions.Item label="Name">
+								{!edit ? (
+									selectedPlaylist?.name
+								) : (
+									<input
+										type="text"
+										value={editPlaylist.name}
+										className={styles.input}
+										placeholder="Enter Playlist Name"
+										onChange={(e) =>
+											setEditPlaylist({
+												...editPlaylist,
+												name: e.target.value,
+											})
+										}
+									/>
+								)}
+							</Descriptions.Item>
+							<Descriptions.Item label="Media Count">
+								{selectedPlaylist?.documents?.length}
+							</Descriptions.Item>
+							<Descriptions.Item label="Date Created">
+								{new Date(
+									selectedPlaylist?.dateCreated,
+								).toLocaleDateString()}
+							</Descriptions.Item>
+							<Descriptions.Item label="Date Modified">
+								{new Date(
+									selectedPlaylist?.dateModified,
+								).toLocaleDateString()}
+							</Descriptions.Item>
+							<Descriptions.Item label="Media Files">
+								{!edit ? (
+									<ul>
+										{selectedPlaylist?.documents?.map(
+											(item) => (
+												<h1>
+													{
+														documents?.find(
+															(doc) =>
+																doc._id ===
+																item,
+														)?.name
+													}
+												</h1>
+											),
+										)}
+									</ul>
+								) : (
+									<Select
+										mode="multiple"
+										allowClear
+										style={{
+											width: "100%",
+										}}
+										value={editPlaylist.documents}
+										onChange={(value) =>
+											setEditPlaylist({
+												...editPlaylist,
+												documents: value,
+											})
+										}
+										placeholder="Select Media Files"
+										options={options}
+									/>
+								)}
+							</Descriptions.Item>
+						</Descriptions>
+					</div>
+					{edit && (
+						<div className="w-full flex justify-center gap-4">
 							<Button
 								type="primary"
 								danger
-								onClick={() => {
-									editPlaylist(selectedPlaylist);
-									setEdit(true);
-								}}
-							>
-								Edit
-							</Button>
-						) : (
-							<Button
-								type="primary"
-								danger
-								onClick={async () => {
+								onClick={async (e) => {
+									e.preventDefault();
+									console.log(editPlaylist);
 									const { data } = await updatePlaylist(
 										selectedPlaylist._id,
-										selectedPlaylist,
+										editPlaylist,
 									);
+
 									if (data.success) {
 										messageApi.success(data.message);
 										setEdit(false);
+										setView(false);
 									} else {
 										messageApi.error(data.message);
 									}
@@ -246,55 +335,17 @@ const Playlist = () => {
 							>
 								Save
 							</Button>
-						)}
-					</div>
-					<div>
-						<label className={styles.label}>Name</label>
-						{!edit ? (
-							<h1>{selectedPlaylist.name}</h1>
-						) : (
-							<input
-								type="text"
-								value={editPlaylist.name}
-								className={styles.input}
-								placeholder="Enter Playlist Name"
-								onChange={(e) =>
-									setEditPlaylist({
-										...editPlaylist,
-										name: e.target.value,
-									})
-								}
-							/>
-						)}
-
-						<label className={styles.label}>Media</label>
-						{!edit ? (
-							<div className="w-full flex flex-col gap-2">
-								{selectedPlaylist?.documents?.map((doc) => (
-									<div className="w-full flex justify-between">
-										<h1>{doc.name}</h1>
-									</div>
-								))}
-							</div>
-						) : (
-							<Select
-								mode="multiple"
-								allowClear
-								style={{
-									width: "100%",
+							<Button
+								type="primary"
+								danger
+								onClick={() => {
+									setEdit(false);
 								}}
-								value={editPlaylist.documents}
-								onChange={(value) =>
-									setEditPlaylist({
-										...editPlaylist,
-										documents: value,
-									})
-								}
-								placeholder="Select Media Files"
-								options={options}
-							/>
-						)}
-					</div>
+							>
+								Cancel
+							</Button>
+						</div>
+					)}
 				</div>
 			</Modal>
 		</div>

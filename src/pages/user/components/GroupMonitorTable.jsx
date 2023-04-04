@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Table, Tag, message, Popconfirm, Button } from "antd";
-import { AiFillDelete, AiOutlineLink } from "react-icons/ai";
+import { Table, Tag, message, Popconfirm, Button, Spin } from "antd";
+import { AiFillDelete, AiOutlineLink, AiOutlineMore } from "react-icons/ai";
 
 import { useGetPlaylistsQuery } from "../../../services/PlaylistApi";
 import {
@@ -14,7 +14,7 @@ const GroupMonitorTable = () => {
 	const { data: playlist } = useGetPlaylistsQuery();
 	const [stopPlayListOneGroup] = useStopPlayListOneGroupMutation();
 	const [deleteAScreenGroup] = useDeleteAScreenGroupMutation();
-	const { data } = useGetGroupedScreensQuery();
+	const { data, isLoading } = useGetGroupedScreensQuery();
 	const { data: mediaData } = useGetAllDocumentsQuery();
 	const documents = mediaData?.documents;
 	const [messageApi, contextHolder] = message.useMessage();
@@ -112,38 +112,28 @@ const GroupMonitorTable = () => {
 			key: "action",
 			render: (text, record, index) => {
 				return (
-					<div className="flex gap-4">
-						{contextHolder}
-						<Popconfirm
-							title="Are you sure to delete this group?"
-							onConfirm={() => {
-								deleteAScreenGroup(record._id);
-								showMessage("Deleted");
-							}}
-							onCancel={() => {
-								messageApi.error("Cancelled");
-							}}
-							okText="Yes"
-							cancelText="No"
-							okButtonProps={{ danger: true }}
-						>
-							<AiFillDelete className="cursor-pointer text-xl" />
-						</Popconfirm>
-						<h1 className="cursor-pointer text-blue-500 hover:text-blue-700">
-							More
-						</h1>
+					<div className="flex items-center gap-4">
+						<AiOutlineMore size={20} className="cursor-pointer" />
 					</div>
 				);
 			},
 		},
 	];
 	return (
-		<Table
-			columns={columns}
-			dataSource={data?.screens}
-			pagination={{ pageSize: 15, position: ["bottomCenter"] }}
-			scroll={{ x: 240 }}
-		/>
+		<div>
+			{!isLoading ? (
+				<Table
+					columns={columns}
+					dataSource={data?.screens}
+					pagination={{ pageSize: 15, position: ["bottomCenter"] }}
+					scroll={{ x: 240 }}
+				/>
+			) : (
+				<div className="w-full flex justify-center items-center h-48">
+					<Spin size="large" />
+				</div>
+			)}
+		</div>
 	);
 };
 

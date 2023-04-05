@@ -152,7 +152,7 @@ const Schedule = () => {
 										options={ungroupedData?.screens.map(
 											(group) => {
 												return {
-													label: group.username,
+													label: group.name,
 													value: group._id,
 												};
 											},

@@ -1,6 +1,7 @@
 import React from "react";
-import { Table, Tag, message, Spin, Button } from "antd";
-import { AiFillCopy } from "react-icons/ai";
+import { Table, Tag, message, Spin, Button, Popover, QRCode } from "antd";
+import { AiFillCopy, AiOutlineQrcode } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 
 import { useGetPlaylistsQuery } from "../../../services/PlaylistApi";
 import {
@@ -8,8 +9,10 @@ import {
 	useGetGroupedScreensQuery,
 	useLogoutScreenMutation,
 } from "../../../services/UserMonitorApi";
+import logo from "../../../assets/images/logo.jpg";
 
 const MonitorTable = () => {
+	const navigate = useNavigate();
 	const [logoutScreen] = useLogoutScreenMutation();
 	const { data: playlist } = useGetPlaylistsQuery();
 	const { data, isLoading } = useGetUserMonitorQuery();
@@ -30,6 +33,11 @@ const MonitorTable = () => {
 			render: (text, record, index) => {
 				return index + 1;
 			},
+		},
+		{
+			title: "Screen Name",
+			dataIndex: "name",
+			key: "name",
 		},
 		{
 			title: "Username",
@@ -109,7 +117,14 @@ const MonitorTable = () => {
 							if (doc._id === text) {
 								return (
 									<div>
-										<p>{doc.name}</p>
+										<p
+											className="cursor-pointer"
+											onClick={() =>
+												navigate("/user/playlists")
+											}
+										>
+											{doc.name}
+										</p>
 									</div>
 								);
 							}
@@ -124,7 +139,7 @@ const MonitorTable = () => {
 			key: "copy",
 			render: (text, record, index) => {
 				return (
-					<div>
+					<div className="w-full flex gap-4">
 						{contextHolder}
 						<AiFillCopy
 							className="cursor-pointer text-xl text-gray-400"
@@ -139,6 +154,22 @@ const MonitorTable = () => {
 								showMessage("Password Copied");
 							}}
 						/>
+						{contextHolder}
+
+						<Popover
+							overlayInnerStyle={{
+								padding: 0,
+							}}
+							content={
+								<QRCode
+									value={`username: ${record.username} password: ${record.password}`}
+									errorLevel="M"
+									bordered={false}
+								/>
+							}
+						>
+							<AiOutlineQrcode className="cursor-pointer text-xl text-gray-400" />
+						</Popover>
 					</div>
 				);
 			},

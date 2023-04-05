@@ -1,24 +1,22 @@
 import React, { useState } from "react";
-import { Table, Tag, message, Popconfirm, Button, Spin } from "antd";
-import { AiFillDelete, AiOutlineLink, AiOutlineMore } from "react-icons/ai";
+import { Table, Tag, message, Button, Spin, Modal, Descriptions } from "antd";
+import { AiOutlineMore } from "react-icons/ai";
 
 import { useGetPlaylistsQuery } from "../../../services/PlaylistApi";
 import {
 	useGetGroupedScreensQuery,
-	useDeleteAScreenGroupMutation,
 	useStopPlayListOneGroupMutation,
+	useGetUserMonitorQuery,
 } from "../../../services/UserMonitorApi";
-import { useGetAllDocumentsQuery } from "../../../services/UserMediaApi";
 
 const GroupMonitorTable = () => {
+	const [view, setView] = useState(false);
+	const [viewData, setViewData] = useState({});
+	const { data: userMonitors } = useGetUserMonitorQuery();
 	const { data: playlist } = useGetPlaylistsQuery();
 	const [stopPlayListOneGroup] = useStopPlayListOneGroupMutation();
-	const [deleteAScreenGroup] = useDeleteAScreenGroupMutation();
 	const { data, isLoading } = useGetGroupedScreensQuery();
-	const { data: mediaData } = useGetAllDocumentsQuery();
-	const documents = mediaData?.documents;
 	const [messageApi, contextHolder] = message.useMessage();
-	const [showPassword, setShowPassword] = useState([]);
 	const showMessage = (text) => {
 		messageApi.open({
 			type: "success",
@@ -45,7 +43,7 @@ const GroupMonitorTable = () => {
 			dataIndex: "screens",
 			key: "screens",
 			render: (tex, record) => {
-				return record.screens.length;
+				return record.screens?.length;
 			},
 		},
 		{
@@ -113,7 +111,14 @@ const GroupMonitorTable = () => {
 			render: (text, record, index) => {
 				return (
 					<div className="flex items-center gap-4">
-						<AiOutlineMore size={20} className="cursor-pointer" />
+						<AiOutlineMore
+							size={20}
+							className="cursor-pointer"
+							onClick={() => {
+								setView(true);
+								setViewData(record);
+							}}
+						/>
 					</div>
 				);
 			},
@@ -122,12 +127,73 @@ const GroupMonitorTable = () => {
 	return (
 		<div>
 			{!isLoading ? (
-				<Table
-					columns={columns}
-					dataSource={data?.screens}
-					pagination={{ pageSize: 15, position: ["bottomCenter"] }}
-					scroll={{ x: 240 }}
-				/>
+				<div>
+					<Table
+						columns={columns}
+						dataSource={data?.screens}
+						pagination={{
+							pageSize: 15,
+							position: ["bottomCenter"],
+						}}
+						scroll={{ x: 240 }}
+					/>
+					<Modal
+						title="Group Details"
+						visible={view}
+						onCancel={() => setView(false)}
+						footer={null}
+					>
+						<Descriptions title="" column={1}>
+							<Descriptions.Item label="Group Name">
+								{viewData.name}
+							</Descriptions.Item>
+							<Descriptions.Item label="Number of Monitors">
+								{viewData?.screens?.length}
+							</Descriptions.Item>
+							<Descriptions.Item label="Playlist Playing">
+								{playlist?.playlist?.map((doc) => {
+									if (doc._id === viewData.document) {
+										return <p>{doc.name}</p>;
+									}
+								})}
+							</Descriptions.Item>
+							<Descriptions.Item label="Media Status">
+								{viewData.isPlaying === true ? (
+									<Tag color="green">Playing</Tag>
+								) : (
+									<Tag color="red">Not Playing</Tag>
+								)}
+							</Descriptions.Item>
+							<Descriptions.Item label="Monitors">
+								<ul>
+									{viewData?.screens?.map((screen) => {
+										return (
+											<li>
+												{userMonitors?.screens?.map(
+													(doc) => {
+														if (
+															doc._id === screen
+														) {
+															return (
+																<div>
+																	<p>
+																		{
+																			doc.username
+																		}
+																	</p>
+																</div>
+															);
+														}
+													},
+												)}
+											</li>
+										);
+									})}
+								</ul>
+							</Descriptions.Item>
+						</Descriptions>
+					</Modal>
+				</div>
 			) : (
 				<div className="w-full flex justify-center items-center h-48">
 					<Spin size="large" />

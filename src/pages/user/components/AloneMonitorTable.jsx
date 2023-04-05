@@ -33,6 +33,11 @@ const AloneMonitorTable = () => {
 			},
 		},
 		{
+			title: "Screen Name",
+			dataIndex: "name",
+			key: "name",
+		},
+		{
 			title: "Username",
 			dataIndex: "username",
 			key: "username",

@@ -6,7 +6,7 @@ import {
 } from "react-icons/md";
 import { FaBusinessTime } from "react-icons/fa";
 
-export const apiUrl = "https://prosign-backend.onrender.com/api/";
+export const apiUrl = "http://13.235.254.144:5000/api/";
 
 const styles = {
 	icon: "text-[#black] text-[20px] font-medium",

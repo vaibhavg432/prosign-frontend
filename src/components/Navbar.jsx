@@ -30,7 +30,12 @@ const Navbar = () => {
 	return (
 		<div className="w-full flex justify-between bg-white px-8 py-4 items-center shadow-2xl">
 			<div className="w-2/12 flex justify-center items-center">
-				<h1 className = "font-bold text-2xl">Digi Signs</h1>
+				<h1
+					className="font-black text-3xl text-[#FF4D4F] italic text-center cursor-pointer"
+					onClick={() => navigate("/")}
+				>
+					DIGISIGNS
+				</h1>
 			</div>
 			<ul className="w-8/12 justify-center flex gap-8 items-center">
 				{navLinks.map((link, index) => (

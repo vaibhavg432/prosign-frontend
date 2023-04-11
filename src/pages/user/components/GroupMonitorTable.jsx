@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Table, Tag, message, Button, Spin, Modal, Descriptions } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import { AiOutlineMore } from "react-icons/ai";
 
 import { useGetPlaylistsQuery } from "../../../services/PlaylistApi";
@@ -7,6 +8,7 @@ import {
 	useGetGroupedScreensQuery,
 	useStopPlayListOneGroupMutation,
 	useGetUserMonitorQuery,
+	useDeleteAScreenGroupMutation,
 } from "../../../services/UserMonitorApi";
 
 const GroupMonitorTable = () => {
@@ -14,7 +16,9 @@ const GroupMonitorTable = () => {
 	const [viewData, setViewData] = useState({});
 	const { data: userMonitors } = useGetUserMonitorQuery();
 	const { data: playlist } = useGetPlaylistsQuery();
-	const [stopPlayListOneGroup] = useStopPlayListOneGroupMutation();
+	const [stopPlayListOneGroup, { isLoading: isStopping }] =
+		useStopPlayListOneGroupMutation();
+	const [deleteAScreenGroup, { isLoading: isDeleting }] = useDeleteAScreenGroupMutation();
 	const { data, isLoading } = useGetGroupedScreensQuery();
 	const [messageApi, contextHolder] = message.useMessage();
 	const showMessage = (text) => {
@@ -89,6 +93,7 @@ const GroupMonitorTable = () => {
 			render: (text, record) => {
 				return (
 					<div>
+						{contextHolder}
 						<Button
 							type="primary"
 							danger
@@ -98,7 +103,11 @@ const GroupMonitorTable = () => {
 								showMessage("Stopped");
 							}}
 						>
-							Stop
+							{isStopping ? (
+								<LoadingOutlined className="text-white" />
+							) : (
+								"Stop"
+							)}
 						</Button>
 					</div>
 				);
@@ -128,65 +137,25 @@ const GroupMonitorTable = () => {
 		<div>
 			{!isLoading ? (
 				<div>
-					<Table
-						columns={columns}
-						dataSource={data?.screens}
-						pagination={{
-							pageSize: 15,
-							position: ["bottomCenter"],
-						}}
-						scroll={{ x: 240 }}
-					/>
-					<Modal
-						title="Group Details"
-						visible={view}
-						onCancel={() => setView(false)}
-						footer={null}
-					>
+					<Table columns={columns} dataSource={data?.screens} pagination={{ pageSize: 15, position: ["bottomCenter"], }} scroll={{ x: 240 }} />
+					<Modal title="Group Details" visible={view} onCancel={() => setView(false)} footer={null} >
+						<div className = "w-full flex px-4 justify-end">
+							<Button type="primary" danger onClick = {async (e) => {
+								const {data} = await deleteAScreenGroup(viewData._id);
+								showMessage("Deleted");
+								setView(false);
+							}} > {isDeleting ? ( <LoadingOutlined className="text-white" /> ) : ( "Delete" )} </Button>
+						</div>
 						<Descriptions title="" column={1}>
-							<Descriptions.Item label="Group Name">
-								{viewData.name}
-							</Descriptions.Item>
-							<Descriptions.Item label="Number of Monitors">
-								{viewData?.screens?.length}
-							</Descriptions.Item>
-							<Descriptions.Item label="Playlist Playing">
-								{playlist?.playlist?.map((doc) => {
-									if (doc._id === viewData.document) {
-										return <p>{doc.name}</p>;
-									}
-								})}
-							</Descriptions.Item>
-							<Descriptions.Item label="Media Status">
-								{viewData.isPlaying === true ? (
-									<Tag color="green">Playing</Tag>
-								) : (
-									<Tag color="red">Not Playing</Tag>
-								)}
-							</Descriptions.Item>
+							<Descriptions.Item label="Group Name"> {viewData.name} </Descriptions.Item>
+							<Descriptions.Item label="Number of Monitors"> {viewData?.screens?.length} </Descriptions.Item>
+							<Descriptions.Item label="Playlist Playing"> {playlist?.playlist?.map((doc) => { if (doc._id === viewData.document) { return <p>{doc.name}</p>; } })} </Descriptions.Item>
+							<Descriptions.Item label="Media Status"> {viewData.isPlaying === true ? ( <Tag color="green">Playing</Tag> ) : ( <Tag color="red">Not Playing</Tag> )} </Descriptions.Item>
 							<Descriptions.Item label="Monitors">
 								<ul>
 									{viewData?.screens?.map((screen) => {
 										return (
-											<li>
-												{userMonitors?.screens?.map(
-													(doc) => {
-														if (
-															doc._id === screen
-														) {
-															return (
-																<div>
-																	<p>
-																		{
-																			doc.username
-																		}
-																	</p>
-																</div>
-															);
-														}
-													},
-												)}
-											</li>
+											<li> {userMonitors?.screens?.map( (doc) => { if ( doc._id === screen ) { return ( <div> <p> { doc.username } </p> </div> ); } }, )} </li>
 										);
 									})}
 								</ul>
@@ -194,11 +163,7 @@ const GroupMonitorTable = () => {
 						</Descriptions>
 					</Modal>
 				</div>
-			) : (
-				<div className="w-full flex justify-center items-center h-48">
-					<Spin size="large" />
-				</div>
-			)}
+			) : ( <div className="w-full flex justify-center items-center h-48"> <Spin size="large" /> </div> )}
 		</div>
 	);
 };

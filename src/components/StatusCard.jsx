@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import CountUp from "react-countup";
 
 const StatusCard = ({ title, count, color, path }) => {
 	const navigate = useNavigate();
@@ -12,7 +13,9 @@ const StatusCard = ({ title, count, color, path }) => {
 				onClick={() => navigate(path)}
 			>
 				<h1 className="mt-4">
-					<span className={`text-3xl font-extrabold`}>{count}</span>
+					<span className={`text-3xl font-extrabold`}>
+						<CountUp end={count} duration={5} />
+					</span>
 				</h1>
 				<h1 className="text-sm">{title}</h1>
 			</div>

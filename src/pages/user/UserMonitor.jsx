@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { message, Button, Space, Modal, Input, Segmented, Select } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
+
 import {
 	MonitorTable,
 	AloneMonitorTable,
@@ -14,7 +16,8 @@ import {
 import { useGetUserQuery } from "../../services/UserApi";
 
 const Monitors = () => {
-	const [createAScreenGroup] = useCreateAScreenGroupMutation();
+	const [createAScreenGroup, { isLoading: isCreating }] =
+		useCreateAScreenGroupMutation();
 	const [addMonitor] = useAddMonitorMutation();
 	const { data: ungroupedData } = useGetUngroupedScreensQuery();
 	const ungrouped = ungroupedData?.screens;
@@ -133,7 +136,11 @@ const Monitors = () => {
 										}
 									}}
 								>
-									Create New group
+									{isCreating ? (
+										<LoadingOutlined className="text-white" />
+									) : (
+										"Create Group"
+									)}
 								</Button>
 							</Modal>
 						</Space>
@@ -181,6 +188,7 @@ const Monitors = () => {
 								{contextHolder}
 								<Button
 									type="primary"
+									danger
 									className="bg-[#598392] mt-4"
 									onClick={() => {
 										if (

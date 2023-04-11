@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Button, Space, message, Modal } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 
 import "../index.css";
+import { Loader } from "../components";
 import { COLORS, styles } from "../constants";
 import logins from "../assets/images/login.svg";
 import { useLoginMutation } from "../services/AuthApi";
@@ -15,7 +17,7 @@ const Login = () => {
 	const [messageApi, contextHolder] = message.useMessage();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-	const [login] = useLoginMutation();
+	const [login, { isLoading: isLogging }] = useLoginMutation();
 	const [form, setForm] = useState({
 		email: "",
 		password: "",
@@ -171,7 +173,11 @@ const Login = () => {
 										className={`${color.btnPrimary}`}
 										onClick={onSubmit}
 									>
-										Login
+										{isLogging ? (
+											<LoadingOutlined className="text-white" />
+										) : (
+											"Login"
+										)}
 									</Button>
 								</Space>
 							</div>

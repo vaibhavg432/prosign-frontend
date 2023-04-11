@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Table, Tag, Select, Button, message, Spin, Modal } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import { AiOutlineLink } from "react-icons/ai";
 
 import { User } from "../../components";
@@ -26,7 +27,7 @@ const Schedule = () => {
 	const { data, isLoading: monitorLoading } =
 		useGetCurrentPlayingMonitorsQuery();
 	const { data: allDocuments, isLoading } = useGetAllDocumentsQuery();
-	const [playPlaylistOnMixedScreens] =
+	const [playPlaylistOnMixedScreens, { isLoading: isScheduling }] =
 		usePlayPlaylistOnMixedScreensMutation();
 	const documents = allDocuments?.documents;
 	const columns = [
@@ -182,6 +183,7 @@ const Schedule = () => {
 									/>
 								</div>
 								<div>
+									{contextHolder}
 									<Button
 										type="primary"
 										danger
@@ -210,7 +212,11 @@ const Schedule = () => {
 											}
 										}}
 									>
-										Schedule
+										{isScheduling ? (
+											<LoadingOutlined className="text-white" />
+										) : (
+											"Schedule"
+										)}
 									</Button>
 								</div>
 							</div>

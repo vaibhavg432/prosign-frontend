@@ -1,30 +1,47 @@
 import React from "react";
 import { Table, Tag, message, Spin, Button, Popover, QRCode } from "antd";
+import {
+	LoadingOutlined,
+	EyeOutlined,
+	EyeInvisibleOutlined,
+	SaveOutlined,
+} from "@ant-design/icons";
 import { AiFillCopy, AiOutlineQrcode } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 
+import { styles } from "../../../constants";
 import { useGetPlaylistsQuery } from "../../../services/PlaylistApi";
 import {
 	useGetUserMonitorQuery,
 	useGetGroupedScreensQuery,
 	useLogoutScreenMutation,
+	useUpdateMonitorNameMutation,
 } from "../../../services/UserMonitorApi";
-import logo from "../../../assets/images/logo.jpg";
 
 const MonitorTable = () => {
 	const navigate = useNavigate();
-	const [logoutScreen] = useLogoutScreenMutation();
+	const [updateMonitorName, { isLoading: isUpdating }] =
+		useUpdateMonitorNameMutation();
+	const [logoutScreen, { isLoading: isLoggingOut }] =
+		useLogoutScreenMutation();
 	const { data: playlist } = useGetPlaylistsQuery();
 	const { data, isLoading } = useGetUserMonitorQuery();
 	const { data: groupedData } = useGetGroupedScreensQuery();
 	const [messageApi, contextHolder] = message.useMessage();
+	const [showPass, setShowPass] = React.useState([]);
+	const [name, setName] = React.useState([]);
+	const [logout, setLogout] = React.useState([]);
+	const [newName, setNewName] = React.useState("");
 	const showMessage = (text) => {
 		messageApi.open({
 			type: "success",
 			content: text,
 		});
 	};
-
+	const temp = [];
+	for (let i = 0; i < data?.screens?.length; i++) {
+		temp.push(false);
+	}
 	const columns = [
 		{
 			title: "SNo.",
@@ -38,20 +55,106 @@ const MonitorTable = () => {
 			title: "Screen Name",
 			dataIndex: "name",
 			key: "name",
-		},
-		{
-			title: "Username",
-			dataIndex: "username",
-			key: "username",
-		},
-		{
-			title: "Password",
-			dataIndex: "password",
-			key: "password",
 			render: (text, record, index) => {
 				return (
-					<div className="flex gap-2 items-center">
-						<h1>{text}</h1>
+					<div className="w-full flex">
+						{name[index] ? (
+							<div className="flex w-full items-center gap-2">
+								<input
+									type="text"
+									value={newName}
+									onChange={(e) => {
+										setNewName(e.target.value);
+									}}
+									className={styles.input}
+								/>
+								{contextHolder}
+								{!isUpdating ? (
+									<SaveOutlined
+										className="cursor-pointer text-lg"
+										onClick={async () => {
+											const { data } =
+												await updateMonitorName({
+													id: record._id,
+													name: newName,
+												});
+											if (!data?.success) {
+												messageApi.open({
+													type: "error",
+													content: data?.message,
+												});
+											} else {
+												const temp1 = [...name];
+												temp1[index] = false;
+												setName(temp1);
+												showMessage("Name Updated");
+											}
+										}}
+									/>
+								) : (
+									<LoadingOutlined />
+								)}
+							</div>
+						) : (
+							<h1
+								className="cursor-pointer"
+								onClick={() => {
+									const temp1 = [...name];
+									//set all elements for false
+									for (let i = 0; i < temp1.length; i++) {
+										temp1[i] = false;
+									}
+									temp1[index] = true;
+									setName(temp1);
+									setNewName(text);
+								}}
+							>
+								{text}
+							</h1>
+						)}
+					</div>
+				);
+			},
+		},
+		{
+			title: "Credentials",
+			dataIndex: "creds",
+			key: "creds",
+			render: (text, record, index) => {
+				return (
+					<div className="w-full flex">
+						<div>
+							<h1>ID : {record.username}</h1>
+							<h1>
+								Pass :{" "}
+								{showPass[index] ? (
+									<Tag color="blue">{record.password}</Tag>
+								) : (
+									<Tag color="green">********</Tag>
+								)}
+							</h1>
+						</div>
+						<div className="flex w-full justify-center items-center">
+							{showPass[index] ? (
+								<EyeInvisibleOutlined
+									className="cursor-pointer"
+									onClick={() => {
+										const temp1 = [...showPass];
+										temp1[index] = false;
+										setShowPass(temp1);
+									}}
+								/>
+							) : (
+								<EyeOutlined
+									className="cursor-pointer"
+									onClick={() => {
+										const temp1 = [...showPass];
+										temp1[index] = true;
+										setShowPass(temp1);
+									}}
+								/>
+							)}
+						</div>
 					</div>
 				);
 			},
@@ -186,6 +289,9 @@ const MonitorTable = () => {
 							danger
 							disabled={record.status === "inactive"}
 							onClick={async (e) => {
+								const temp1 = [...logout];
+								temp1[index] = true;
+								setLogout(temp1);
 								await logoutScreen(record._id)
 									.then((res) => {
 										if (res.data) {
@@ -194,6 +300,9 @@ const MonitorTable = () => {
 												content: "Screen Logged Out",
 											});
 										}
+										const temp2 = [...logout];
+										temp2[index] = false;
+										setLogout(temp2);
 									})
 									.catch((err) => {
 										messageApi.open({
@@ -203,7 +312,11 @@ const MonitorTable = () => {
 									});
 							}}
 						>
-							Logout
+							{isLoggingOut && logout[index] ? (
+								<LoadingOutlined />
+							) : (
+								"Logout"
+							)}
 						</Button>
 					</div>
 				);
@@ -211,7 +324,7 @@ const MonitorTable = () => {
 		},
 	];
 	return (
-		<div>
+		<div className="">
 			{!isLoading ? (
 				<Table
 					columns={columns}

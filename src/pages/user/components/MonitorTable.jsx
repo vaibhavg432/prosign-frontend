@@ -123,10 +123,10 @@ const MonitorTable = () => {
 			render: (text, record, index) => {
 				return (
 					<div className="w-full flex">
-						<div>
-							<h1>ID : {record.username}</h1>
+						<div className="text-sm">
+							<h1>{record.username}</h1>
 							<h1>
-								Pass :{" "}
+								<span className="font-bold">Pass :</span>{" "}
 								{showPass[index] ? (
 									<Tag color="blue">{record.password}</Tag>
 								) : (

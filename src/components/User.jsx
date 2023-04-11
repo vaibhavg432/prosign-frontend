@@ -9,6 +9,8 @@ import { UserNavbar } from "../components";
 import { userLinks } from "../constants/data";
 import { COLORS as color } from "../constants";
 
+import "../index.css";
+
 const User = ({ name, Component }) => {
 	const navigate = useNavigate();
 	const items = [
@@ -89,7 +91,7 @@ const User = ({ name, Component }) => {
 			>
 				<div className="w-full flex justify-between">
 					<div>
-						<h1 className="text-xl font-bold text-red-700">{name}</h1>
+						<h1 className="text-xl bold text-red-700">{name}</h1>
 					</div>
 					<div>
 						<Dropdown

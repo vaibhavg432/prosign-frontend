@@ -1,46 +1,20 @@
-import React from "react";
-import { Table, Tag } from "antd";
+import React, { useState } from "react";
+import { Table, Tag, Modal, Descriptions, Button, message } from "antd";
+import { MoreOutlined, LoadingOutlined } from "@ant-design/icons";
 
 import { Admin } from "../../components";
-import { useGetUsersQuery } from "../../services/AdminApi";
+import {
+	useGetUsersQuery,
+	useToggleStatusOfUserMutation,
+} from "../../services/AdminApi";
 
 const Users = () => {
-	const { data, isLoading } = useGetUsersQuery();
-	const users = isLoading ? [] : data;
-	// const users = [
-	// 	{
-	// 		_id: {
-	// 			$oid: "64168c5d5271f671a2a96cd1",
-	// 		},
-	// 		name: "Vaibhav Gupta",
-	// 		email: "guptavaibhav01@gmail.com",
-	// 		role: "user",
-	// 		status: "active",
-	// 		date: 1679199325310,
-	// 		__v: 12,
-	// 		screenLimit: 10,
-	// 		screenCount: 3,
-	// 		bio: "I am a user\n",
-	// 		address: {
-	// 			street: "13",
-	// 			state: "Delhi\n",
-	// 			city: "Delhi",
-	// 			zip: "110094",
-	// 		},
-	// 		phone: "8826271548",
-	// 		screens: [
-	// 			{
-	// 				$oid: "641e7d87a5b6a018d8419af6",
-	// 			},
-	// 			{
-	// 				$oid: "641e7d87a5b6a018d8419af8",
-	// 			},
-	// 			{
-	// 				$oid: "641e844aa98b2f8dc6b98d2a",
-	// 			},
-	// 		],
-	// 	},
-	// ];
+	const [messageApi, contextHolder] = message.useMessage();
+	const [open, setOpen] = useState(false);
+	const [user, setUser] = useState({});
+	const { data: users } = useGetUsersQuery();
+	const [toggleStatus, { isLoading: isToggling }] =
+		useToggleStatusOfUserMutation();
 	const columns = [
 		{
 			title: "S.No",
@@ -89,31 +63,112 @@ const Users = () => {
 				);
 			},
 		},
-		Table.EXPAND_COLUMN,
+		{
+			title: "More",
+			dataIndex: "more",
+			key: "more",
+			render: (text, record, index) => {
+				return (
+					<MoreOutlined
+						onClick={() => {
+							setUser(record);
+							setOpen(true);
+						}}
+						className="cursor-pointer"
+					/>
+				);
+			},
+		},
 	];
 	return (
 		<div className="w-full">
 			<div>
-				<h1>All Users</h1>
+				<h1 className="font-bold text-2xl">All Users</h1>
 			</div>
 			<div className="w-full">
 				<Table
-					dataSource={users}
+					dataSource={users?.users}
 					columns={columns}
 					pagination={{ pageSize: 20 }}
-					expandable={{
-						expandedRowRender: (record) => (
-							<p
-								style={{
-									margin: 0,
-								}}
-							>
-								{record.bio}
-							</p>
-						),
-					}}
 				/>
 			</div>
+
+			<Modal
+				title="User Details"
+				visible={open}
+				onOk={() => setOpen(false)}
+				onCancel={() => setOpen(false)}
+				footer={null}
+				width={800}
+			>
+				<br />
+				<div className="w-full flex justify-end">
+					{contextHolder}
+					<Button
+						type="primary"
+						danger
+						onClick={async () => {
+							await toggleStatus(user._id);
+							messageApi.success({
+								content: "Status Toggled",
+								key: "toggleStatus",
+								duration: 2,
+							});
+							setOpen(false);
+						}}
+					>
+						{isToggling ? (
+							<LoadingOutlined className="text-white" />
+						) : (
+							"Toggle Status"
+						)}
+					</Button>
+				</div>
+				<Descriptions title="Personal Info" column={1}>
+					<Descriptions.Item label="Name">
+						{" "}
+						{user.name}
+					</Descriptions.Item>
+					<Descriptions.Item label="Bio">
+						{" "}
+						{user.bio}
+					</Descriptions.Item>
+					<Descriptions.Item label="Email">
+						{" "}
+						{user.email}
+					</Descriptions.Item>
+					<Descriptions.Item label="Phone No.">
+						{" "}
+						{user.phone}
+					</Descriptions.Item>
+					<Descriptions.Item label="Date Joined">
+						{new Date(user.date).toLocaleDateString()}
+					</Descriptions.Item>
+
+					<Descriptions.Item label="Address">
+						{user.address}
+					</Descriptions.Item>
+				</Descriptions>
+				<br />
+				<Descriptions title="Account Info" column={1}>
+					<Descriptions.Item label="Account Status">
+						{user.status === "active" ? (
+							<Tag color="green">Active</Tag>
+						) : (
+							<Tag color="red">Inactive</Tag>
+						)}
+					</Descriptions.Item>
+					<Descriptions.Item label="Account Type">
+						{user.role?.toUpperCase()}
+					</Descriptions.Item>
+					<Descriptions.Item label="No. of Screen Alloted">
+						{user.screenLimit}
+					</Descriptions.Item>
+					<Descriptions.Item label="No. of Screen Used">
+						{user.screenCount}
+					</Descriptions.Item>
+				</Descriptions>
+			</Modal>
 		</div>
 	);
 };

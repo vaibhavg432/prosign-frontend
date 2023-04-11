@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Button, Space, message } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
 import "../index.css";
@@ -9,7 +10,7 @@ import { useRegisterMutation } from "../services/AuthApi";
 
 const SignUp = () => {
 	const [messageApi, contextHolder] = message.useMessage();
-	const [register] = useRegisterMutation();
+	const [register, { isLoading: isRegistering }] = useRegisterMutation();
 	const navigate = useNavigate();
 	const [form, setForm] = useState({
 		name: "",
@@ -129,7 +130,11 @@ const SignUp = () => {
 									danger
 									onClick={onSubmit}
 								>
-									Register
+									{isRegistering ? (
+										<LoadingOutlined className="text-white" />
+									) : (
+										"Sign Up"
+									)}
 								</Button>
 							</Space>
 						</div>

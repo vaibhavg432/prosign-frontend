@@ -48,6 +48,7 @@ const Login = () => {
 		} else {
 			success(data.message);
 			localStorage.setItem("token", data.token);
+
 			if (data.role === "admin") {
 				localStorage.setItem("admin", true);
 				if (localStorage.getItem("user")) {
@@ -63,6 +64,7 @@ const Login = () => {
 				dispatch(userLogin());
 				navigate("/user");
 			}
+			// window.location.reload();
 		}
 	};
 	return (

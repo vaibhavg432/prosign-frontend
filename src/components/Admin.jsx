@@ -59,7 +59,9 @@ const Admin = (props) => {
 			<div className="w-10/12 flex flex-col gap-4  p-4">
 				<div className="w-full flex justify-between">
 					<div>
-						<h1 className="text-2xl font-light">{props.name}</h1>
+						<h1 className="text-xl bold text-red-700">
+							{props.name}
+						</h1>
 					</div>
 					<div>
 						<Dropdown

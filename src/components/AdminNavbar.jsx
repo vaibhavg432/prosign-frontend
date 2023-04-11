@@ -16,10 +16,10 @@ const AdminNavnar = () => {
 		<div className="w-full py-12 h-[100vh] shadow-xl">
 			<div className="w-full flex flex-col items-center gap-4">
 				<h1
-					className="text-center cursor-pointer"
+					className="font-black text-3xl text-[#FF4D4F] italic text-center cursor-pointer"
 					onClick={() => navigate("/")}
 				>
-					Company
+					DIGISIGNS
 				</h1>
 				<div className="w-[90%] h-[1px] bg-gray-400"></div>
 			</div>

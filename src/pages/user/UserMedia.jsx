@@ -33,9 +33,11 @@ const Media = () => {
 	const [uploadOneDocument, { isLoading: isUploading }] =
 		useUploadOneDocumentMutation();
 	const [deleteOneDocument] = useDeleteOneDocumentMutation();
-	const [updateOneDocument] = useUpdateOneDocumentMutation();
+	const [updateOneDocument, { isLoading: isUpdating }] =
+		useUpdateOneDocumentMutation();
 	const [documentName, setDocumentName] = useState("");
 	const [documentEdit, setDocumentEdit] = useState(-1);
+	const [update, setUpdate] = useState([]);
 	const documents = data?.documents;
 	const showMessage = (text) => {
 		messageApi.open({
@@ -74,22 +76,32 @@ const Media = () => {
 								setDocumentName(e.target.value);
 							}}
 						/>
-						<SaveOutlined
-							className="text-xl text-blue-500 cursor-pointer"
-							onClick={() => {
-								updateOneDocument({
-									documentId: record._id,
-									name: documentName,
-								});
-								setDocumentEdit(-1);
-								setDocumentName("");
-								showMessage("Document updated");
-							}}
-						/>
+						{isUpdating && update[index] ? (
+							<LoadingOutlined className="cursor-pointer" />
+						) : (
+							<div>
+								{contextHolder}
+								<SaveOutlined
+									className="text-xl cursor-pointer"
+									onClick={async (e) => {
+										await updateOneDocument({
+											documentId: record._id,
+											name: documentName,
+										});
+										setDocumentEdit(-1);
+										setDocumentName("");
+										showMessage("Document updated");
+									}}
+								/>
+							</div>
+						)}
 					</div>
 				) : (
 					<h1
 						onClick={() => {
+							const temp = [...update];
+							temp[index] = true;
+							setUpdate(temp);
 							setDocumentEdit(index);
 							setDocumentName(text);
 						}}
@@ -201,25 +213,24 @@ const Media = () => {
 								<Button
 									type="primary"
 									danger
-									disabled={isUploading}
 									className={`${color.btnPrimary}`}
-									onClick={() => {
+									onClick={async () => {
 										console.log(file);
 										if (file) {
 											const formData = new FormData();
 											formData.append("data", file);
-											uploadOneDocument(formData);
+											await uploadOneDocument(formData);
 											setIsModalVisible(false);
 											setFile(null);
 											showMessage("Document uploaded");
 										}
 									}}
 								>
-									{isUploading
-										? (
-												<LoadingOutlined className="text-white" />
-										  ) + " Uploading"
-										: "Upload"}
+									{isUploading ? (
+										<LoadingOutlined className="text-white" />
+									) : (
+										"Upload"
+									)}
 								</Button>
 							</div>
 						</Modal>

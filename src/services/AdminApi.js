@@ -20,8 +20,28 @@ export const adminApi = createApi({
 			query: () => "users",
 			providesTags: (result) => (result ? ["AdminApi"] : ["AdminApi"]),
 		}),
+		totalScreens: builder.query({
+			query: () => "total-screens",
+			providesTags: (result) => (result ? ["AdminApi"] : ["AdminApi"]),
+		}),
+		currentPlayingScreens: builder.query({
+			query: () => "current-playing-screens",
+			providesTags: (result) => (result ? ["AdminApi"] : ["AdminApi"]),
+		}),
+		toggleStatusOfUser: builder.mutation({
+			query: (userId) => ({
+				url: `toggle-status/${userId}`,
+				method: "PATCH",
+			}),
+			invalidatesTags: ["AdminApi"],
+		}),
 	}),
 });
 
-export const { useGetUsersQuery } = adminApi;
+export const {
+	useGetUsersQuery,
+	useTotalScreensQuery,
+	useCurrentPlayingScreensQuery,
+	useToggleStatusOfUserMutation,
+} = adminApi;
 export default adminApi;

@@ -155,7 +155,7 @@ const GroupMonitorTable = () => {
 								<ul>
 									{viewData?.screens?.map((screen) => {
 										return (
-											<li> {userMonitors?.screens?.map( (doc) => { if ( doc._id === screen ) { return ( <div> <p> { doc.username } </p> </div> ); } }, )} </li>
+											<li> {userMonitors?.screens?.map( (doc) => { if ( doc._id === screen ) { return ( <div> <p> { doc.name } </p> </div> ); } }, )} </li>
 										);
 									})}
 								</ul>

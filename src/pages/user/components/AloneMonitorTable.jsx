@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Table, Tag, message, Button, Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import { AiFillEye, AiFillEyeInvisible, AiFillCopy } from "react-icons/ai";
 
 import { useGetPlaylistsQuery } from "../../../services/PlaylistApi";
@@ -10,7 +11,8 @@ import {
 import { useGetAllDocumentsQuery } from "../../../services/UserMediaApi";
 
 const AloneMonitorTable = () => {
-	const [stopPlayListOneScreen] = useStopPlayListOneScreenMutation();
+	const [stopPlayListOneScreen, { isLoading: isStopping }] =
+		useStopPlayListOneScreenMutation();
 	const { data: playlist } = useGetPlaylistsQuery();
 	const { data, isLoading } = useGetUngroupedScreensQuery();
 	const { data: mediaData } = useGetAllDocumentsQuery();
@@ -113,6 +115,7 @@ const AloneMonitorTable = () => {
 			render: (text, record) => {
 				return (
 					<div className="flex gap-4">
+						{contextHolder}
 						<Button
 							type="primary"
 							danger
@@ -124,7 +127,11 @@ const AloneMonitorTable = () => {
 								showMessage("Stopped");
 							}}
 						>
-							Stop
+							{isStopping ? (
+								<LoadingOutlined className="text-white" />
+							) : (
+								"Stop"
+							)}
 						</Button>
 					</div>
 				);

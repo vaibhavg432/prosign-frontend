@@ -11,6 +11,7 @@ import {
 } from "antd";
 import { AiOutlineLink } from "react-icons/ai";
 import {
+	LoadingOutlined,
 	UploadOutlined,
 	DeleteOutlined,
 	SaveOutlined,
@@ -29,7 +30,8 @@ const Media = () => {
 	const [messageApi, contextHolder] = message.useMessage();
 	const [file, setFile] = useState(null);
 	const { data, isLoading } = useGetAllDocumentsQuery();
-	const [uploadOneDocument] = useUploadOneDocumentMutation();
+	const [uploadOneDocument, { isLoading: isUploading }] =
+		useUploadOneDocumentMutation();
 	const [deleteOneDocument] = useDeleteOneDocumentMutation();
 	const [updateOneDocument] = useUpdateOneDocumentMutation();
 	const [documentName, setDocumentName] = useState("");
@@ -195,9 +197,11 @@ const Media = () => {
 									</Button>
 								</Upload>
 								{/* Input file using antd upload */}
+								{contextHolder}
 								<Button
 									type="primary"
 									danger
+									disabled={isUploading}
 									className={`${color.btnPrimary}`}
 									onClick={() => {
 										console.log(file);
@@ -211,7 +215,11 @@ const Media = () => {
 										}
 									}}
 								>
-									Upload
+									{isUploading
+										? (
+												<LoadingOutlined className="text-white" />
+										  ) + " Uploading"
+										: "Upload"}
 								</Button>
 							</div>
 						</Modal>

@@ -9,6 +9,7 @@ import {
 	Spin,
 	Popconfirm,
 } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import { AiOutlineMore } from "react-icons/ai";
 import { styles } from "../../constants";
 import { useGetAllDocumentsQuery } from "../../services/UserMediaApi";
@@ -35,8 +36,10 @@ const Playlist = () => {
 	const [adding, setAdding] = useState(false);
 
 	const [updatePlaylist] = useUpdatePlaylistMutation();
-	const [deletePlaylist] = useDeletePlaylistMutation();
-	const [createPlaylist] = useCreatePlaylistMutation();
+	const [deletePlaylist, { isLoading: isDeleting }] =
+		useDeletePlaylistMutation();
+	const [createPlaylist, { isLoading: isCreating }] =
+		useCreatePlaylistMutation();
 	const { data: documentData } = useGetAllDocumentsQuery();
 	const { data: playlistData, isLoading: playlistLoading } =
 		useGetPlaylistsQuery();
@@ -193,7 +196,11 @@ const Playlist = () => {
 							}
 						}}
 					>
-						Create
+						{isCreating ? (
+							<LoadingOutlined className="text-white" />
+						) : (
+							"Create"
+						)}
 					</Button>
 				</div>
 			</Modal>
@@ -208,6 +215,7 @@ const Playlist = () => {
 			>
 				<div className="w-full flex flex-col gap-2">
 					<div className="w-full flex justify-end mt-2 gap-4">
+						{contextHolder}
 						<Button
 							type="primary"
 							danger
@@ -226,8 +234,13 @@ const Playlist = () => {
 								}
 							}}
 						>
-							Delete
+							{isDeleting ? (
+								<LoadingOutlined className="text-white" />
+							) : (
+								"Delete"
+							)}
 						</Button>
+						{contextHolder}
 						<Button
 							type="primary"
 							danger

@@ -1,5 +1,10 @@
 import React from "react";
 import { Table, Tag, message, Spin, Button, Popover, QRCode } from "antd";
+import {
+	EyeOutlined,
+	EyeInvisibleOutlined,
+	CopyOutlined,
+} from "@ant-design/icons";
 import { AiFillCopy, AiOutlineQrcode } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 
@@ -9,7 +14,6 @@ import {
 	useGetGroupedScreensQuery,
 	useLogoutScreenMutation,
 } from "../../../services/UserMonitorApi";
-import logo from "../../../assets/images/logo.jpg";
 
 const MonitorTable = () => {
 	const navigate = useNavigate();
@@ -18,13 +22,19 @@ const MonitorTable = () => {
 	const { data, isLoading } = useGetUserMonitorQuery();
 	const { data: groupedData } = useGetGroupedScreensQuery();
 	const [messageApi, contextHolder] = message.useMessage();
+	const [showPass, setShowPass] = React.useState([]);
+	const [name, setName] = React.useState([]);
+	const [newName, setNewName] = React.useState("");
 	const showMessage = (text) => {
 		messageApi.open({
 			type: "success",
 			content: text,
 		});
 	};
-
+	const temp = [];
+	for (let i = 0; i < data?.screens?.length; i++) {
+		temp.push(false);
+	}
 	const columns = [
 		{
 			title: "SNo.",
@@ -38,20 +48,74 @@ const MonitorTable = () => {
 			title: "Screen Name",
 			dataIndex: "name",
 			key: "name",
-		},
-		{
-			title: "Username",
-			dataIndex: "username",
-			key: "username",
-		},
-		{
-			title: "Password",
-			dataIndex: "password",
-			key: "password",
 			render: (text, record, index) => {
 				return (
-					<div className="flex gap-2 items-center">
-						<h1>{text}</h1>
+					<div className="w-full flex">
+						{name[index] ? (
+							<input
+								type="text"
+								value={newName}
+								onChange={(e) => {
+									setNewName(e.target.value);
+								}}
+								className="w-full"
+							/>
+						) : (
+							<h1
+								className="cursor-pointer"
+								onClick={() => {
+									const temp1 = [...name];
+									temp1[index] = true;
+									setName(temp1);
+									setNewName(text);
+								}}
+							>
+								{text}
+							</h1>
+						)}
+					</div>
+				);
+			},
+		},
+		{
+			title: "Credentials",
+			dataIndex: "creds",
+			key: "creds",
+			render: (text, record, index) => {
+				return (
+					<div className="w-full flex">
+						<div>
+							<h1>ID : {record.username}</h1>
+							<h1>
+								Pass :{" "}
+								{showPass[index] ? (
+									<Tag color="blue">{record.password}</Tag>
+								) : (
+									<Tag color="green">********</Tag>
+								)}
+							</h1>
+						</div>
+						<div className="flex w-full justify-center items-center">
+							{showPass[index] ? (
+								<EyeInvisibleOutlined
+									className="cursor-pointer"
+									onClick={() => {
+										const temp1 = [...showPass];
+										temp1[index] = false;
+										setShowPass(temp1);
+									}}
+								/>
+							) : (
+								<EyeOutlined
+									className="cursor-pointer"
+									onClick={() => {
+										const temp1 = [...showPass];
+										temp1[index] = true;
+										setShowPass(temp1);
+									}}
+								/>
+							)}
+						</div>
 					</div>
 				);
 			},

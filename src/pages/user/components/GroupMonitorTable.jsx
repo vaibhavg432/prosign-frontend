@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Table, Tag, message, Button, Spin, Modal, Descriptions } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import { AiOutlineMore } from "react-icons/ai";
 
 import { useGetPlaylistsQuery } from "../../../services/PlaylistApi";
@@ -14,7 +15,8 @@ const GroupMonitorTable = () => {
 	const [viewData, setViewData] = useState({});
 	const { data: userMonitors } = useGetUserMonitorQuery();
 	const { data: playlist } = useGetPlaylistsQuery();
-	const [stopPlayListOneGroup] = useStopPlayListOneGroupMutation();
+	const [stopPlayListOneGroup, { isLoading: isStopping }] =
+		useStopPlayListOneGroupMutation();
 	const { data, isLoading } = useGetGroupedScreensQuery();
 	const [messageApi, contextHolder] = message.useMessage();
 	const showMessage = (text) => {
@@ -89,6 +91,7 @@ const GroupMonitorTable = () => {
 			render: (text, record) => {
 				return (
 					<div>
+						{contextHolder}
 						<Button
 							type="primary"
 							danger
@@ -98,7 +101,11 @@ const GroupMonitorTable = () => {
 								showMessage("Stopped");
 							}}
 						>
-							Stop
+							{isStopping ? (
+								<LoadingOutlined className="text-white" />
+							) : (
+								"Stop"
+							)}
 						</Button>
 					</div>
 				);

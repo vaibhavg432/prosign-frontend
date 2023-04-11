@@ -5,6 +5,7 @@ import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 
 import "../index.css";
+import { Loader } from "../components";
 import { COLORS, styles } from "../constants";
 import logins from "../assets/images/login.svg";
 import { useLoginMutation } from "../services/AuthApi";
@@ -15,7 +16,7 @@ const Login = () => {
 	const [messageApi, contextHolder] = message.useMessage();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-	const [login] = useLoginMutation();
+	const [login, { isLoading: isLogging }] = useLoginMutation();
 	const [form, setForm] = useState({
 		email: "",
 		password: "",
@@ -82,111 +83,123 @@ const Login = () => {
 					<div
 						className={` w-[90%] sm:w-[65%] h-[90%] sm:h-[80%] flex flex-col items-center justify-between py-12 bg-white rounded-md`}
 					>
-						<div className="px-4 w-full flex flex-col items-center gap-4">
-							<h1 className="text-xl">Enter Your Credentials</h1>
-						</div>
-						<div className="w-full flex flex-col px-8 mt-4 gap-4 ">
-							<div>
-								<label className={styles.label}>Email*</label>
-								<input
-									type="email"
-									className={styles.input}
-									placeholder="Enter your email"
-									value={form.email}
-									onChange={(e) =>
-										setForm({
-											...form,
-											email: e.target.value,
-										})
-									}
-								/>
-							</div>
-							<div>
-								<label className={styles.label}>
-									Password*
-								</label>
-								<input
-									type="password"
-									className={styles.input}
-									placeholder="Enter your password"
-									value={form.password}
-									onChange={(e) =>
-										setForm({
-											...form,
-											password: e.target.value,
-										})
-									}
-								/>
-								{/* //forgot Password */}
-								<h1
-									className="text-sm text-gray-600 mt-2 cursor-pointer"
-									onClick={() => setIsOpen(true)}
-								>
-									Forgot Password ?{" "}
-								</h1>
-							</div>
-							<Modal
-								title="Forgot Password"
-								visible={isOpen}
-								onCancel={() => setIsOpen(false)}
-								footer={null}
-							>
-								<div className="w-full py-8">
-									<label className={styles.label}>
-										Email*
-									</label>
-									<input
-										type="email"
-										className={styles.input}
-										placeholder="Enter your email"
-										value={resetForm.email}
-										onChange={(e) =>
-											setResetForm({
-												...resetForm,
-												email: e.target.value,
-											})
-										}
-									/>
-									<div className="w-full flex justify-between items-center mt-4">
-										<Button
-											type="primary"
-											danger
-											className={`${color.btnPrimary}`}
+						{!isLogging ? (
+							<div className="w-full h-[100%] flex flex-col items-center justify-between ">
+								<div className="px-4 w-full flex flex-col items-center gap-4">
+									<h1 className="text-xl">
+										Enter Your Credentials
+									</h1>
+								</div>
+								<div className="w-full flex flex-col px-8 mt-4 gap-4 ">
+									<div>
+										<label className={styles.label}>
+											Email*
+										</label>
+										<input
+											type="email"
+											className={styles.input}
+											placeholder="Enter your email"
+											value={form.email}
+											onChange={(e) =>
+												setForm({
+													...form,
+													email: e.target.value,
+												})
+											}
+										/>
+									</div>
+									<div>
+										<label className={styles.label}>
+											Password*
+										</label>
+										<input
+											type="password"
+											className={styles.input}
+											placeholder="Enter your password"
+											value={form.password}
+											onChange={(e) =>
+												setForm({
+													...form,
+													password: e.target.value,
+												})
+											}
+										/>
+										{/* //forgot Password */}
+										<h1
+											className="text-sm text-gray-600 mt-2 cursor-pointer"
+											onClick={() => setIsOpen(true)}
 										>
-											Send Mail
-										</Button>
+											Forgot Password ?{" "}
+										</h1>
+									</div>
+									<Modal
+										title="Forgot Password"
+										visible={isOpen}
+										onCancel={() => setIsOpen(false)}
+										footer={null}
+									>
+										<div className="w-full py-8">
+											<label className={styles.label}>
+												Email*
+											</label>
+											<input
+												type="email"
+												className={styles.input}
+												placeholder="Enter your email"
+												value={resetForm.email}
+												onChange={(e) =>
+													setResetForm({
+														...resetForm,
+														email: e.target.value,
+													})
+												}
+											/>
+											<div className="w-full flex justify-between items-center mt-4">
+												<Button
+													type="primary"
+													danger
+													className={`${color.btnPrimary}`}
+												>
+													Send Mail
+												</Button>
+											</div>
+										</div>
+									</Modal>
+									<div>
+										<Space
+											direction="vertical"
+											style={{ width: "100%" }}
+										>
+											{contextHolder}
+											<Button
+												type="primary"
+												danger
+												block
+												className={`${color.btnPrimary}`}
+												onClick={onSubmit}
+											>
+												Login
+											</Button>
+										</Space>
 									</div>
 								</div>
-							</Modal>
-							<div>
-								<Space
-									direction="vertical"
-									style={{ width: "100%" }}
-								>
-									{contextHolder}
-									<Button
-										type="primary"
-										danger
-										block
-										className={`${color.btnPrimary}`}
-										onClick={onSubmit}
-									>
-										Login
-									</Button>
-								</Space>
+								<div>
+									<h1>
+										Don't have an account?{" "}
+										<span
+											className="text-[#598392] cursor-pointer"
+											onClick={() => navigate("/signup")}
+										>
+											Sign Up
+										</span>
+									</h1>
+								</div>
 							</div>
-						</div>
-						<div>
-							<h1>
-								Don't have an account?{" "}
-								<span
-									className="text-[#598392] cursor-pointer"
-									onClick={() => navigate("/signup")}
-								>
-									Sign Up
-								</span>
-							</h1>
-						</div>
+						) : (
+							<div className="w-full h-[100%] flex flex-col items-center justify-between ">
+								<Loader />
+							</div>
+						)}
 					</div>
 				</div>
 			</div>

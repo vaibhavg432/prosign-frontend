@@ -1,29 +1,36 @@
 import React from "react";
 import { Table, Tag, message, Spin, Button, Popover, QRCode } from "antd";
 import {
+	LoadingOutlined,
 	EyeOutlined,
 	EyeInvisibleOutlined,
-	CopyOutlined,
+	SaveOutlined,
 } from "@ant-design/icons";
 import { AiFillCopy, AiOutlineQrcode } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 
+import { styles } from "../../../constants";
 import { useGetPlaylistsQuery } from "../../../services/PlaylistApi";
 import {
 	useGetUserMonitorQuery,
 	useGetGroupedScreensQuery,
 	useLogoutScreenMutation,
+	useUpdateMonitorNameMutation,
 } from "../../../services/UserMonitorApi";
 
 const MonitorTable = () => {
 	const navigate = useNavigate();
-	const [logoutScreen] = useLogoutScreenMutation();
+	const [updateMonitorName, { isLoading: isUpdating }] =
+		useUpdateMonitorNameMutation();
+	const [logoutScreen, { isLoading: isLoggingOut }] =
+		useLogoutScreenMutation();
 	const { data: playlist } = useGetPlaylistsQuery();
 	const { data, isLoading } = useGetUserMonitorQuery();
 	const { data: groupedData } = useGetGroupedScreensQuery();
 	const [messageApi, contextHolder] = message.useMessage();
 	const [showPass, setShowPass] = React.useState([]);
 	const [name, setName] = React.useState([]);
+	const [logout, setLogout] = React.useState([]);
 	const [newName, setNewName] = React.useState("");
 	const showMessage = (text) => {
 		messageApi.open({
@@ -52,19 +59,51 @@ const MonitorTable = () => {
 				return (
 					<div className="w-full flex">
 						{name[index] ? (
-							<input
-								type="text"
-								value={newName}
-								onChange={(e) => {
-									setNewName(e.target.value);
-								}}
-								className="w-full"
-							/>
+							<div className="flex w-full items-center gap-2">
+								<input
+									type="text"
+									value={newName}
+									onChange={(e) => {
+										setNewName(e.target.value);
+									}}
+									className={styles.input}
+								/>
+								{contextHolder}
+								{!isUpdating ? (
+									<SaveOutlined
+										className="cursor-pointer text-lg"
+										onClick={async () => {
+											const { data } =
+												await updateMonitorName({
+													id: record._id,
+													name: newName,
+												});
+											if (!data?.success) {
+												messageApi.open({
+													type: "error",
+													content: data?.message,
+												});
+											} else {
+												const temp1 = [...name];
+												temp1[index] = false;
+												setName(temp1);
+												showMessage("Name Updated");
+											}
+										}}
+									/>
+								) : (
+									<LoadingOutlined />
+								)}
+							</div>
 						) : (
 							<h1
 								className="cursor-pointer"
 								onClick={() => {
 									const temp1 = [...name];
+									//set all elements for false
+									for (let i = 0; i < temp1.length; i++) {
+										temp1[i] = false;
+									}
 									temp1[index] = true;
 									setName(temp1);
 									setNewName(text);
@@ -250,6 +289,9 @@ const MonitorTable = () => {
 							danger
 							disabled={record.status === "inactive"}
 							onClick={async (e) => {
+								const temp1 = [...logout];
+								temp1[index] = true;
+								setLogout(temp1);
 								await logoutScreen(record._id)
 									.then((res) => {
 										if (res.data) {
@@ -258,6 +300,9 @@ const MonitorTable = () => {
 												content: "Screen Logged Out",
 											});
 										}
+										const temp2 = [...logout];
+										temp2[index] = false;
+										setLogout(temp2);
 									})
 									.catch((err) => {
 										messageApi.open({
@@ -267,7 +312,11 @@ const MonitorTable = () => {
 									});
 							}}
 						>
-							Logout
+							{isLoggingOut && logout[index] ? (
+								<LoadingOutlined />
+							) : (
+								"Logout"
+							)}
 						</Button>
 					</div>
 				);
@@ -275,7 +324,7 @@ const MonitorTable = () => {
 		},
 	];
 	return (
-		<div>
+		<div className="">
 			{!isLoading ? (
 				<Table
 					columns={columns}

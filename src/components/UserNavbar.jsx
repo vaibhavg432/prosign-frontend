@@ -13,14 +13,10 @@ const UserNavbar = () => {
 		<div className="w-full py-12 h-[100vh] shadow-xl">
 			<div className="w-full flex flex-col justify-center items-center gap-4">
 				<h1
-					className="text-center cursor-pointer"
+					className="font-black text-3xl text-[#FF4D4F] italic text-center cursor-pointer"
 					onClick={() => navigate("/")}
 				>
-					<img
-						src={logo}
-						alt="logo"
-						className="w-[100px] h-[100px] rounded-md"
-					/>
+					DIGISIGNS
 				</h1>
 				<div className="w-[90%] h-[1px] bg-gray-400"></div>
 			</div>

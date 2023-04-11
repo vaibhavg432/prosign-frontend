@@ -34,6 +34,14 @@ export const userMonitorApi = createApi({
 			}),
 			invalidatesTags: ["UserMonitor"],
 		}),
+		updateMonitorName: builder.mutation({
+			query: (body) => ({
+				url: `update-screen-name/${body.id}`,
+				method: "PATCH",
+				body: { name: body.name },
+			}),
+			invalidatesTags: ["UserMonitor"],
+		}),
 		playOneDocumentOnAllScreen: builder.mutation({
 			query: (documentId) => ({
 				url: "play-document-all-screens",
@@ -112,6 +120,7 @@ export const {
 	useGetUserMonitorQuery,
 	useGetCurrentPlayingMonitorsQuery,
 	useAddMonitorMutation,
+	useUpdateMonitorNameMutation,
 	usePlayOneDocumentOnAllScreenMutation,
 	useStopAllScreensMutation,
 	usePlayPlaylistOnMixedScreensMutation,

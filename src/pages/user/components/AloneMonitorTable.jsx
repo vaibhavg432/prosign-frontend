@@ -1,24 +1,20 @@
 import React, { useState } from "react";
 import { Table, Tag, message, Button, Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
-import { AiFillEye, AiFillEyeInvisible, AiFillCopy } from "react-icons/ai";
 
 import { useGetPlaylistsQuery } from "../../../services/PlaylistApi";
 import {
 	useGetUngroupedScreensQuery,
 	useStopPlayListOneScreenMutation,
 } from "../../../services/UserMonitorApi";
-import { useGetAllDocumentsQuery } from "../../../services/UserMediaApi";
 
 const AloneMonitorTable = () => {
 	const [stopPlayListOneScreen, { isLoading: isStopping }] =
 		useStopPlayListOneScreenMutation();
 	const { data: playlist } = useGetPlaylistsQuery();
 	const { data, isLoading } = useGetUngroupedScreensQuery();
-	const { data: mediaData } = useGetAllDocumentsQuery();
-	const documents = mediaData?.documents;
+	const [stop, setStop] = useState([]);
 	const [messageApi, contextHolder] = message.useMessage();
-	const [showPassword, setShowPassword] = useState([]);
 	const showMessage = (text) => {
 		messageApi.open({
 			type: "success",
@@ -38,23 +34,6 @@ const AloneMonitorTable = () => {
 			title: "Screen Name",
 			dataIndex: "name",
 			key: "name",
-		},
-		{
-			title: "Username",
-			dataIndex: "username",
-			key: "username",
-		},
-		{
-			title: "Password",
-			dataIndex: "password",
-			key: "password",
-			render: (text, record, index) => {
-				return (
-					<div className="flex gap-2 items-center">
-						<h1>{text}</h1>
-					</div>
-				);
-			},
 		},
 		{
 			title: "Media Status",
@@ -112,7 +91,7 @@ const AloneMonitorTable = () => {
 			title: "Stop",
 			dataIndex: "action",
 			key: "action",
-			render: (text, record) => {
+			render: (text, record, index) => {
 				return (
 					<div className="flex gap-4">
 						{contextHolder}
@@ -121,43 +100,24 @@ const AloneMonitorTable = () => {
 							danger
 							disabled={record.isPlaying === false}
 							onClick={async (e) => {
-								const { data } = stopPlayListOneScreen(
+								const temp1 = [...stop];
+								temp1[index] = true;
+								setStop(temp1);
+								const { data } = await stopPlayListOneScreen(
 									record._id,
 								);
 								showMessage("Stopped");
+								const temp2 = [...stop];
+								temp2[index] = false;
+								setStop(temp2);
 							}}
 						>
-							{isStopping ? (
+							{isStopping && stop[index] ? (
 								<LoadingOutlined className="text-white" />
 							) : (
 								"Stop"
 							)}
 						</Button>
-					</div>
-				);
-			},
-		},
-		{
-			title: "Copy Credentials",
-			dataIndex: "copy",
-			key: "copy",
-			render: (text, record, index) => {
-				return (
-					<div>
-						{contextHolder}
-						<AiFillCopy
-							className="cursor-pointer text-xl text-gray-400"
-							onClick={() => {
-								navigator.clipboard.writeText(
-									"Username: " +
-										record.username +
-										"\n" +
-										"Password: " +
-										record.password,
-								);
-								showMessage("Password Copied");
-							}}
-						/>
 					</div>
 				);
 			},

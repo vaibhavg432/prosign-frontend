@@ -13,7 +13,7 @@ const UserNavbar = () => {
 		<div className="w-full py-4 h-[100vh] shadow-xl">
 			<div className="w-full flex flex-col justify-center items-center gap-4">
 				<h1
-					className="font-black text-3xl text-[#FF4D4F] italic text-center cursor-pointer"
+					className="font-extrabold text-3xl text-[#FF4D4F]  text-center cursor-pointer"
 					onClick={() =>
 						(window.location.href = "https://digisigns.in/")
 					}

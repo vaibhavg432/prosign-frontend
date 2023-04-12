@@ -14,9 +14,9 @@ import { useGetPlaylistsQuery } from "../../services/PlaylistApi";
 import { useGetAllDocumentsQuery } from "../../services/UserMediaApi";
 
 const Schedule = () => {
-	const { data: groupedData } = useGetGroupedScreensQuery();
-	const { data: ungroupedData } = useGetUngroupedScreensQuery();
-	const { data: playlist } = useGetPlaylistsQuery();
+	const { data: groupedData } = useGetGroupedScreensQuery({},{ pollingInterval: 1000, });
+	const { data: ungroupedData } = useGetUngroupedScreensQuery({},{ pollingInterval: 1000, });
+	const { data: playlist } = useGetPlaylistsQuery({},{ pollingInterval: 1000, });
 	const [schedule, setSchedule] = useState(false);
 	const [selected, setSelected] = useState({
 		group: [],

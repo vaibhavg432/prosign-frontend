@@ -31,7 +31,7 @@ const Navbar = () => {
 		<div className="w-full flex justify-between bg-white px-8 py-4 items-center shadow-2xl">
 			<div className="w-2/12 flex justify-center items-center">
 				<h1
-					className="font-black text-3xl text-[#FF4D4F] italic text-center cursor-pointer"
+					className="font-extrabold text-3xl text-[#FF4D4F]  text-center cursor-pointer"
 					onClick={() =>
 						(window.location.href = "https://digisigns.in/")
 					}

@@ -17,7 +17,9 @@ const AdminNavnar = () => {
 			<div className="w-full flex flex-col items-center gap-4">
 				<h1
 					className="font-black text-3xl text-[#FF4D4F] italic text-center cursor-pointer"
-					onClick={() => navigate("/")}
+					onClick={() =>
+						(window.location.href = "https://digisigns.in/")
+					}
 				>
 					DIGISIGNS
 				</h1>

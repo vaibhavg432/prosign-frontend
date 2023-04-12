@@ -22,7 +22,7 @@ const Navbar = () => {
 			}
 		} else {
 			dispatch(logout());
-			navigate("/");
+			window.location.href = "https://digisigns.in/";
 		}
 		// eslint-disable-next-line
 	}, []);
@@ -32,7 +32,9 @@ const Navbar = () => {
 			<div className="w-2/12 flex justify-center items-center">
 				<h1
 					className="font-black text-3xl text-[#FF4D4F] italic text-center cursor-pointer"
-					onClick={() => navigate("/")}
+					onClick={() =>
+						(window.location.href = "https://digisigns.in/")
+					}
 				>
 					DIGISIGNS
 				</h1>

@@ -72,9 +72,16 @@ const Login = () => {
 			<div className="h-[10vh] flex items-center px-8 gap-2">
 				<IoIosArrowBack
 					className="text-xl cursor-pointer"
-					onClick={() => navigate("/")}
+					onClick={() =>
+						(window.location.href = "https://digisigns.in/")
+					}
 				/>
-				<h1 className="cursor-pointer" onClick={() => navigate("/")}>
+				<h1
+					className="cursor-pointer"
+					onClick={() =>
+						(window.location.href = "https://digisigns.in/")
+					}
+				>
 					Back To Home
 				</h1>
 			</div>

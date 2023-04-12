@@ -24,9 +24,9 @@ const MonitorTable = () => {
 		useUpdateMonitorNameMutation();
 	const [logoutScreen, { isLoading: isLoggingOut }] =
 		useLogoutScreenMutation();
-	const { data: playlist } = useGetPlaylistsQuery();
-	const { data, isLoading } = useGetUserMonitorQuery();
-	const { data: groupedData } = useGetGroupedScreensQuery();
+	const { data: playlist } = useGetPlaylistsQuery({},{ pollingInterval: 1000, });
+	const { data, isLoading } = useGetUserMonitorQuery({},{ pollingInterval: 1000, });
+	const { data: groupedData } = useGetGroupedScreensQuery({},{ pollingInterval: 1000, });
 	const [messageApi, contextHolder] = message.useMessage();
 	const [showPass, setShowPass] = React.useState([]);
 	const [name, setName] = React.useState([]);

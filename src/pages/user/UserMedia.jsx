@@ -1,64 +1,36 @@
 import React, { useState } from "react";
-import {
-	Button,
-	Space,
-	Modal,
-	Table,
-	Popconfirm,
-	message,
-	Upload,
-	Spin,
-} from "antd";
+import { Button, Space, Modal, Table, Popconfirm, message, Upload, Spin } from "antd";
 import { AiOutlineLink } from "react-icons/ai";
-import {
-	LoadingOutlined,
-	UploadOutlined,
-	DeleteOutlined,
-	SaveOutlined,
-} from "@ant-design/icons";
+import { LoadingOutlined, UploadOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons";
 
 import { COLORS as color } from "../../constants";
 import { User } from "../../components";
-import {
-	useGetAllDocumentsQuery,
-	useUploadOneDocumentMutation,
-	useDeleteOneDocumentMutation,
-	useUpdateOneDocumentMutation,
-} from "../../services/UserMediaApi";
+import { useGetAllDocumentsQuery, useUploadOneDocumentMutation, useDeleteOneDocumentMutation, useUpdateOneDocumentMutation, } from "../../services/UserMediaApi";
 
 const Media = () => {
 	const [messageApi, contextHolder] = message.useMessage();
 	const [file, setFile] = useState(null);
+
 	const { data, isLoading } = useGetAllDocumentsQuery({},{ pollingInterval: 1000, });
-	const [uploadOneDocument, { isLoading: isUploading }] =
-		useUploadOneDocumentMutation();
-	const [deleteOneDocument] = useDeleteOneDocumentMutation();
-	const [updateOneDocument, { isLoading: isUpdating }] =
-		useUpdateOneDocumentMutation();
+
+	const [uploadOneDocument, { isLoading: isUploading }] = useUploadOneDocumentMutation();
+	const [deleteOneDocument, { isLoading : isDeleting }] = useDeleteOneDocumentMutation();
+	const [updateOneDocument, { isLoading: isUpdating }] = useUpdateOneDocumentMutation();
+
 	const [documentName, setDocumentName] = useState("");
 	const [documentEdit, setDocumentEdit] = useState(-1);
 	const [update, setUpdate] = useState([]);
 	const documents = data?.documents;
-	const showMessage = (text) => {
-		messageApi.open({
-			type: "success",
-			content: text,
-		});
-	};
-	const showError = (text) => {
-		messageApi.open({
-			type: "error",
-			content: text,
-		});
-	};
+
+	
+	const showMessage = (text) => { messageApi.open({ type: "success", content: text, }); };
+	const showError = (text) => { messageApi.open({ type: "error", content: text, }); };
 	const columns = [
 		{
 			title: "SNo.",
 			dataIndex: "_id",
 			key: "_id",
-			render: (text, record, index) => {
-				return index + 1;
-			},
+			render: (text, record, index) => { return index + 1; },
 		},
 		{
 			title: "Name",
@@ -67,47 +39,17 @@ const Media = () => {
 			render: (text, record, index) => {
 				return documentEdit === index ? (
 					<div className="w-full flex gap-4 items-center">
-						<input
-							value={documentName}
-							type="text"
-							placeholder="Enter document name"
-							className="border-2 border-[#598392] rounded-md p-2"
-							onChange={(e) => {
-								setDocumentName(e.target.value);
-							}}
-						/>
+						<input value={documentName} type="text" placeholder="Enter document name" className="border-2 border-[#598392] rounded-md p-2" onChange={(e) => { setDocumentName(e.target.value); }} />
 						{isUpdating && update[index] ? (
 							<LoadingOutlined className="cursor-pointer" />
 						) : (
 							<div>
 								{contextHolder}
-								<SaveOutlined
-									className="text-xl cursor-pointer"
-									onClick={async (e) => {
-										await updateOneDocument({
-											documentId: record._id,
-											name: documentName,
-										});
-										setDocumentEdit(-1);
-										setDocumentName("");
-										showMessage("Document updated");
-									}}
-								/>
+								<SaveOutlined className="text-xl cursor-pointer" onClick={async (e) => { await updateOneDocument({ documentId: record._id, name: documentName, }); setDocumentEdit(-1); setDocumentName(""); showMessage("Document updated"); }} />
 							</div>
 						)}
-					</div>
-				) : (
-					<h1
-						onClick={() => {
-							const temp = [...update];
-							temp[index] = true;
-							setUpdate(temp);
-							setDocumentEdit(index);
-							setDocumentName(text);
-						}}
-					>
-						{text}
-					</h1>
+					</div> ) : (
+					<h1 onClick={() => { const temp = [...update]; temp[index] = true; setUpdate(temp); setDocumentEdit(index); setDocumentName(text); }} > {text} </h1>
 				);
 			},
 		},
@@ -118,12 +60,7 @@ const Media = () => {
 			render: (text) => {
 				return (
 					<div className="flex gap-4 items-center">
-						<AiOutlineLink
-							className="cursor-pointer text-2xl text-green-500"
-							onClick={() => {
-								window.open(text);
-							}}
-						/>
+						<AiOutlineLink className="cursor-pointer text-2xl text-green-500" onClick={() => { window.open(text); }} />
 					</div>
 				);
 			},
@@ -146,22 +83,13 @@ const Media = () => {
 						{contextHolder}
 						<Popconfirm
 							title="Are you sure to delete this document?"
-							onConfirm={async () => {
-								const res = await deleteOneDocument(record._id);
-								messageApi.success(
-									"Document deleted successfully",
-								);
-							}}
-							onCancel={() => {
-								messageApi.error("Document not deleted");
-							}}
+							onConfirm={async () => { const res = await deleteOneDocument(record._id); messageApi.success( "Document deleted successfully", ); }}
+							onCancel={() => { messageApi.error("Document not deleted"); }}
 							okText="Yes"
 							cancelText="No"
 							okButtonProps={{ danger: true }}
 						>
-							<DeleteOutlined
-								className={`text-xl ${color.hoverIconSecondary}`}
-							/>
+							<DeleteOutlined className={`text-xl ${color.hoverIconSecondary}`}/>
 						</Popconfirm>
 					</div>
 				);
@@ -175,39 +103,11 @@ const Media = () => {
 				<h1>All Media Items</h1>
 				<div>
 					<Space direction="vertical" style={{ width: "100%" }}>
-						<Button
-							type="primary"
-							danger
-							block
-							className={`${color.btnPrimary}`}
-							onClick={() => setIsModalVisible(true)}
-						>
-							Add Media
-						</Button>
-						<Modal
-							title="Add Media"
-							open={isModalVisible}
-							onClose={() => setIsModalVisible(false)}
-							okButtonProps={{ style: { display: "none" } }}
-							onCancel={() => setIsModalVisible(false)}
-							closable={true}
-						>
+						<Button type="primary" danger block className={`${color.btnPrimary}`} onClick={() => setIsModalVisible(true)} > Add Media </Button>
+						<Modal title="Add Media" open={isModalVisible} onClose={() => setIsModalVisible(false)} okButtonProps={{ style: { display: "none" } }} onCancel={() => setIsModalVisible(false)} closable={true} >
 							<div className="w-full flex flex-col gap-4">
 								{/* Input file using antd upload */}
-								<Upload
-									name="file"
-									listType="picture"
-									className="w-full"
-									showUploadList={true}
-									beforeUpload={(file) => {
-										setFile(file);
-										return false;
-									}}
-								>
-									<Button icon={<UploadOutlined />}>
-										Click to Upload
-									</Button>
-								</Upload>
+								<Upload name="file" listType="picture" className="w-full" showUploadList={true} beforeUpload={(file) => { setFile(file); return false; }} > <Button icon={<UploadOutlined />}> Click to Upload </Button> </Upload>
 								{/* Input file using antd upload */}
 								{contextHolder}
 								<Button
@@ -240,16 +140,9 @@ const Media = () => {
 			<br />
 			<br />
 			{!isLoading ? (
-				<Table
-					columns={columns}
-					dataSource={documents}
-					pagination={{ pageSize: 15, position: ["bottomCenter"] }}
-					scroll={{ x: 240 }}
-				/>
+				<Table columns={columns} dataSource={documents} pagination={{ pageSize: 15, position: ["bottomCenter"] }} scroll={{ x: 240 }} />
 			) : (
-				<div className="w-full flex justify-center items-center">
-					<Spin size="large" />;
-				</div>
+				<div className="w-full flex justify-center items-center"> <Spin size="large" />; </div>
 			)}
 		</div>
 	);

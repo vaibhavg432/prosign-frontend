@@ -14,19 +14,11 @@ import {
 const GroupMonitorTable = () => {
 	const [view, setView] = useState(false);
 	const [viewData, setViewData] = useState({});
-	const { data: userMonitors } = useGetUserMonitorQuery({},{
-		pollingInterval: 1000,
-	});
-	const { data: playlist } = useGetPlaylistsQuery({},{
-		pollingInterval: 1000,
-	});
-	const [stopPlayListOneGroup, { isLoading: isStopping }] =
-		useStopPlayListOneGroupMutation();
-	const [deleteAScreenGroup, { isLoading: isDeleting }] =
-		useDeleteAScreenGroupMutation();
-	const { data, isLoading } = useGetGroupedScreensQuery({},{
-		pollingInterval: 1000,
-	});
+	const { data: userMonitors } = useGetUserMonitorQuery({},{ pollingInterval: 1000, });
+	const { data: playlist } = useGetPlaylistsQuery({},{ pollingInterval: 1000, });
+	const [stopPlayListOneGroup, { isLoading: isStopping }] = useStopPlayListOneGroupMutation();
+	const [deleteAScreenGroup, { isLoading: isDeleting }] = useDeleteAScreenGroupMutation();
+	const { data, isLoading } = useGetGroupedScreensQuery({},{ pollingInterval: 1000, });
 	const [messageApi, contextHolder] = message.useMessage();
 	const showMessage = (text) => {
 		messageApi.open({
@@ -208,28 +200,7 @@ const GroupMonitorTable = () => {
 								<ul>
 									{viewData?.screens?.map((screen) => {
 										return (
-											<li>
-												{" "}
-												{userMonitors?.screens?.map(
-													(doc) => {
-														if (
-															doc._id === screen
-														) {
-															return (
-																<div>
-																	{" "}
-																	<p>
-																		{" "}
-																		{
-																			doc.name
-																		}{" "}
-																	</p>{" "}
-																</div>
-															);
-														}
-													},
-												)}{" "}
-											</li>
+											<li> {userMonitors?.screens?.map( (doc) => { if ( doc._id === screen ) { return doc.name; } }, )} </li>
 										);
 									})}
 								</ul>

@@ -224,14 +224,14 @@ const Monitors = () => {
 						</Space>
 						<Space direction="vertical" style={{ width: "100%" }}>
 							{contextHolder}
-							<Button type="primary" block danger
+							{/* <Button type="primary" block danger
 								onClick = {async()=>{
 									await stopAllScreens();
 									showMessage("Media Stopped Playing on All Screens");
 								}}
 							>
 								{isStopping ? <LoadingOutlined className = "text-white"/> : "Stop All Screens"}
-							</Button>
+							</Button> */}
 						</Space>
 					</div>
 				</div>

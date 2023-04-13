@@ -9,15 +9,9 @@ import { useGetAllDocumentsQuery } from "../../services/UserMediaApi";
 import { useGetPlaylistsQuery } from "../../services/PlaylistApi";
 
 const Dashboard = () => {
-	const { data: userData } = useGetUserQuery({},{
-		pollingInterval: 1000,
-	});
-	const { data: mediaData } = useGetAllDocumentsQuery({},{
-		pollingInterval: 1000,
-	});
-	const { data: playlistData } = useGetPlaylistsQuery({},{
-		pollingInterval: 1000,
-	});
+	const { data: userData } = useGetUserQuery({},{ pollingInterval: 1000, });
+	const { data: mediaData } = useGetAllDocumentsQuery({},{ pollingInterval: 1000, });
+	const { data: playlistData } = useGetPlaylistsQuery({},{ pollingInterval: 1000, });
 	const user = userData?.user;
 	const media = mediaData?.documents;
 	const playlist = playlistData?.playlist;
@@ -49,24 +43,15 @@ const Dashboard = () => {
 	];
 	return (
 		<div className="w-full flex flex-col gap-2">
-			<div>
-				<h1 className="font-bold text-2xl">Analytics Overview</h1>
-			</div>
+			<div> <h1 className="font-bold text-2xl">Analytics Overview</h1> </div>
 			<div className="w-full flex flex-wrap mt-2 gap-4">
 				{StatusCardData.map((data, index) => (
-					<StatusCard
-						title={data.title}
-						count={data.count}
-						color={data.color}
-						key={index}
-					/>
+					<StatusCard title={data.title} count={data.count} color={data.color} key={index} />
 				))}
 			</div>
 			<div className="mt-8 w-full">
 				<h1 className="font-bold text-2xl">Live Monitors</h1>
-				<div className="mt-2">
-					<MonitorTable />
-				</div>
+				<div className="mt-2"> <MonitorTable /> </div>
 			</div>
 		</div>
 	);
@@ -75,12 +60,7 @@ const Dashboard = () => {
 const UserDashboard = () => {
 	const dispatch = useDispatch();
 	useEffect(() => {
-		if (
-			localStorage.getItem("token") &&
-			localStorage.getItem("role") === "user"
-		) {
-			dispatch(userLogin());
-		}
+		if ( localStorage.getItem("token") && localStorage.getItem("role") === "user" ) { dispatch(userLogin()); }
 		// eslint-disable-next-line
 	}, []);
 	return <User name="Dashboard" Component={<Dashboard />} />;

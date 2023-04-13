@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Segmented, Avatar, Descriptions, Button, Space, message } from "antd";
-import { EditOutlined } from "@ant-design/icons";
+import { LoadingOutlined } from "@ant-design/icons";
 
 import { User } from "../../components";
 import styles from "../../constants/styles";
@@ -13,7 +13,8 @@ const PersonalInfo = () => {
 	const [edit, setEdit] = useState(false);
 	const [messageApi, contextHolder] = message.useMessage();
 	const { data, isLoading } = useGetUserQuery();
-	const [editProfile] = useEditUserProfileMutation();
+	const [editProfile, { isLoading: isEditing }] =
+		useEditUserProfileMutation();
 	const user = data?.user;
 	const [editData, setEditData] = useState(data?.user);
 	console.log(data, isLoading);
@@ -21,16 +22,18 @@ const PersonalInfo = () => {
 		<div className="w-full flex flex-col gap-4">
 			{!isLoading && (
 				<div className="w-full flex justify-center mt-12">
-					<Avatar size={100} className="bg-[#7265E6]">
-						{user.name[0]}
-					</Avatar>
+					<div className="w-36 h-36 bg-white rounded-full flex items-center justify-center">
+						<h1 className="text-5xl font-medium uppercase">
+							{user.name[0]}
+						</h1>
+					</div>
 				</div>
 			)}
 			<div className="w-full flex justify-end gap-2">
 				<Button
 					type="primary"
-					className="bg-[#228B22]"
-					onClick={() => {
+					danger
+					onClick={async() => {
 						if (edit) {
 							setTimeout(() => {
 								messageApi.success("Profile Updated");
@@ -38,18 +41,17 @@ const PersonalInfo = () => {
 						}
 
 						if (edit) {
-							editProfile(editData).unwrap();
+							await editProfile(editData).unwrap();
 						}
 						setEdit(!edit);
 					}}
 				>
-					{edit ? "Save" : "Edit"}
+					{edit ? (isEditing ? <LoadingOutlined className = "text-white"/> : "Save") : "Edit"}
 				</Button>
 				{edit && (
 					<Button
 						type="primary"
 						danger
-						className="bg-[#598392]"
 						onClick={() => {
 							setEdit(!edit);
 						}}
@@ -60,8 +62,8 @@ const PersonalInfo = () => {
 			</div>
 			{!isLoading && (
 				<div className="w-full flex justify-center mt-2">
-					<div className="w-full p-8 rounded-md bg-white">
-						<Descriptions title="User Info" bordered column={1}>
+					<div className="w-full sm:w-[80%] p-8 rounded-md bg-white">
+						<Descriptions title="User Details" column={1}>
 							<Descriptions.Item label="Name">
 								{!edit ? (
 									user.name
@@ -103,23 +105,7 @@ const PersonalInfo = () => {
 								</Descriptions.Item>
 							)}
 							<Descriptions.Item label="Email ID">
-								{!edit ? (
-									user.email
-								) : (
-									<input
-										type="text"
-										className={
-											styles.input + " border-black"
-										}
-										value={editData.email}
-										onChange={(e) => {
-											setEditData({
-												...editData,
-												email: e.target.value,
-											});
-										}}
-									/>
-								)}
+								{user.email}
 							</Descriptions.Item>
 							<Descriptions.Item label="Telephone">
 								{!edit ? (
@@ -256,7 +242,7 @@ const AccountSettings = () => {
 };
 
 const ProfileAndSettings = () => {
-	const tabClass = "py-2";
+	const tabClass = "py-[2px]";
 	const [tabValue, setTabValue] = useState(0);
 	const tabs = [
 		{

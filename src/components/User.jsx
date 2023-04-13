@@ -145,10 +145,15 @@ const User = ({ name, Component }) => {
 							activate your account or new your subscription.
 						</p>
 						<Button
-							type = "primary"
-							danger 
+							type="primary"
+							danger
+							onClick={() => {
+								window.open(
+									`https://wa.me/8826271548?text=Hello%20Admin%2C%20I%20want%20to%20activate%20my%20account.\n%20My%20email%20is%20${user?.email}`,
+								);
+							}}
 						>
-							Renew Plan
+							Contact Admin
 						</Button>
 					</div>
 				</Modal>

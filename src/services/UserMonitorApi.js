@@ -79,6 +79,13 @@ export const userMonitorApi = createApi({
 			}),
 			invalidatesTags: ["UserMonitor"],
 		}),
+		logoutScreen: builder.mutation({
+			query: (id) => ({
+				url: `logout-screen/${id}`,
+				method: "POST",
+			}),
+			invalidatesTags: ["UserMonitor"],
+		}),
 
 		//Group APIS
 		getGroupedScreens: builder.query({
@@ -99,17 +106,18 @@ export const userMonitorApi = createApi({
 			}),
 			invalidatesTags: ["UserMonitor"],
 		}),
+		editAScreenGroup: builder.mutation({
+			query: (body) => ({
+				url: `edit-screen-group/${body._id}`,
+				method: "PATCH",
+				body: body,
+			}),
+			invalidatesTags: ["UserMonitor"],
+		}),
 		deleteAScreenGroup: builder.mutation({
 			query: (id) => ({
 				url: `delete-screen-group/${id}`,
 				method: "DELETE",
-			}),
-			invalidatesTags: ["UserMonitor"],
-		}),
-		logoutScreen: builder.mutation({
-			query: (id) => ({
-				url: `logout-screen/${id}`,
-				method: "POST",
 			}),
 			invalidatesTags: ["UserMonitor"],
 		}),
@@ -131,6 +139,7 @@ export const {
 	useGetGroupedScreensQuery,
 	useGetUngroupedScreensQuery,
 	useCreateAScreenGroupMutation,
+	useEditAScreenGroupMutation,
 	useDeleteAScreenGroupMutation,
 } = userMonitorApi;
 export default userMonitorApi;

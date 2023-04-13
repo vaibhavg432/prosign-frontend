@@ -1,5 +1,5 @@
 import React from "react";
-import { Dropdown, Space, Tag } from "antd";
+import { Dropdown, Space, Tag, Modal, Button } from "antd";
 import { AiOutlineDown, AiOutlineMenu } from "react-icons/ai";
 import { CgProfile, CgLogOut } from "react-icons/cg";
 import { FaUserAlt } from "react-icons/fa";
@@ -90,7 +90,12 @@ const User = ({ name, Component }) => {
 				</Dropdown>
 			</div>
 			<div
-				className={`${color.primary} min-h-[100vh] w-full sm:w-10/12 flex flex-col gap-4  p-4 absolute right-[0px]`}
+				className={`${
+					color.primary
+				} min-h-[100vh] w-full sm:w-10/12 flex flex-col gap-4  p-4 absolute right-[0px] ${
+					user?.status === "inactive" &&
+					"opacity-50 pointer-events-none"
+				}`}
 			>
 				<div className="w-full flex justify-between">
 					<div>
@@ -98,7 +103,7 @@ const User = ({ name, Component }) => {
 					</div>
 					<div className="flex gap-4">
 						<Tag
-							color={`${	
+							color={`${
 								user?.status === "active" ? "green" : "red"
 							}`}
 						>
@@ -124,6 +129,29 @@ const User = ({ name, Component }) => {
 					</div>
 				</div>
 				{Component}
+				<Modal
+					visible={user?.status === "inactive"}
+					footer={null}
+					closable={false}
+					maskClosable={false}
+					width={400}
+				>
+					<div className="flex flex-col gap-4">
+						<h1 className="text-xl bold text-red-700">
+							Account Inactive
+						</h1>
+						<p className="text-gray-500">
+							Your account is inactive. Please contact admin to
+							activate your account or new your subscription.
+						</p>
+						<Button
+							type = "primary"
+							danger 
+						>
+							Renew Plan
+						</Button>
+					</div>
+				</Modal>
 			</div>
 		</div>
 	);

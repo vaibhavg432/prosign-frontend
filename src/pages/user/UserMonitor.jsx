@@ -12,16 +12,25 @@ import {
 	useAddMonitorMutation,
 	useGetUngroupedScreensQuery,
 	useCreateAScreenGroupMutation,
+	useStopAllScreensMutation,
 } from "../../services/UserMonitorApi";
 import { useGetUserQuery } from "../../services/UserApi";
 
 const Monitors = () => {
+	const [stopAllScreens, { isLoading: isStopping }] =
+		useStopAllScreensMutation();
 	const [createAScreenGroup, { isLoading: isCreating }] =
 		useCreateAScreenGroupMutation();
 	const [addMonitor] = useAddMonitorMutation();
-	const { data: ungroupedData } = useGetUngroupedScreensQuery({},{ pollingInterval: 1000, });
+	const { data: ungroupedData } = useGetUngroupedScreensQuery(
+		{},
+		{ pollingInterval: 1000 },
+	);
 	const ungrouped = ungroupedData?.screens;
-	const { data: userData, isLoading } = useGetUserQuery({},{ pollingInterval: 1000, });
+	const { data: userData, isLoading } = useGetUserQuery(
+		{},
+		{ pollingInterval: 1000 },
+	);
 	const user = userData?.user;
 	const [messageApi, contextHolder] = message.useMessage();
 	const [count, setCount] = useState(0);
@@ -212,6 +221,17 @@ const Monitors = () => {
 									Add
 								</Button>
 							</Modal>
+						</Space>
+						<Space direction="vertical" style={{ width: "100%" }}>
+							{contextHolder}
+							<Button type="primary" block danger
+								onClick = {async()=>{
+									await stopAllScreens();
+									showMessage("Media Stopped Playing on All Screens");
+								}}
+							>
+								{isStopping ? <LoadingOutlined className = "text-white"/> : "Stop All Screens"}
+							</Button>
 						</Space>
 					</div>
 				</div>

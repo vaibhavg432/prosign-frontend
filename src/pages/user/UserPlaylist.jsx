@@ -35,7 +35,8 @@ const Playlist = () => {
 	});
 	const [adding, setAdding] = useState(false);
 
-	const [updatePlaylist] = useUpdatePlaylistMutation();
+	const [updatePlaylist, { isLoading: isUpdating }] =
+		useUpdatePlaylistMutation();
 	const [deletePlaylist, { isLoading: isDeleting }] =
 		useDeletePlaylistMutation();
 	const [createPlaylist, { isLoading: isCreating }] =
@@ -326,6 +327,7 @@ const Playlist = () => {
 					</div>
 					{edit && (
 						<div className="w-full flex justify-center gap-4">
+							{contextHolder}
 							<Button
 								type="primary"
 								danger
@@ -333,10 +335,10 @@ const Playlist = () => {
 									e.preventDefault();
 									console.log(editPlaylist);
 									const { data } = await updatePlaylist(
-										selectedPlaylist._id,
 										editPlaylist,
 									);
 
+									console.log(editPlaylist);
 									if (data.success) {
 										messageApi.success(data.message);
 										setEdit(false);
@@ -346,11 +348,12 @@ const Playlist = () => {
 									}
 								}}
 							>
-								Save
+								{isUpdating ? <LoadingOutlined className = "text-white"/> : "Save"}
 							</Button>
 							<Button
 								type="primary"
 								danger
+								disabled = {isUpdating}
 								onClick={() => {
 									setEdit(false);
 								}}

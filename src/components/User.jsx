@@ -1,17 +1,20 @@
 import React from "react";
-import { Dropdown, Space } from "antd";
+import { Dropdown, Space, Tag } from "antd";
 import { AiOutlineDown, AiOutlineMenu } from "react-icons/ai";
 import { CgProfile, CgLogOut } from "react-icons/cg";
-import { FaUsers, FaUserAlt } from "react-icons/fa";
+import { FaUserAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 import { UserNavbar } from "../components";
 import { userLinks } from "../constants/data";
 import { COLORS as color } from "../constants";
+import { useGetUserQuery } from "../services/UserApi";
 
 import "../index.css";
 
 const User = ({ name, Component }) => {
+	const { data: userData } = useGetUserQuery({}, { pollingInterval: 1000 });
+	const user = userData?.user;
 	const navigate = useNavigate();
 	const items = [
 		{
@@ -26,15 +29,15 @@ const User = ({ name, Component }) => {
 				</div>
 			),
 		},
-		{
-			key: "2",
-			label: (
-				<div className="flex items-center gap-2">
-					<FaUsers />
-					Users
-				</div>
-			),
-		},
+		// {
+		// 	key: "2",
+		// 	label: (
+		// 		<div className="flex items-center gap-2">
+		// 			<FaUsers />
+		// 			Users
+		// 		</div>
+		// 	),
+		// },
 		{
 			key: "4",
 			label: (
@@ -93,21 +96,31 @@ const User = ({ name, Component }) => {
 					<div>
 						<h1 className="text-xl bold text-red-700">{name}</h1>
 					</div>
-					<div>
-						<Dropdown
-							menu={{
-								items,
-							}}
-							trigger={["click"]}
-							className="cursor-pointer"
+					<div className="flex gap-4">
+						<Tag
+							color={`${	
+								user?.status === "active" ? "green" : "red"
+							}`}
 						>
-							<div onClick={(e) => e.preventDefault()}>
-								<Space>
-									<FaUserAlt className="text-lg cursor-pointer" />
-									<AiOutlineDown />
-								</Space>
-							</div>
-						</Dropdown>
+							{user?.status === "active" ? "Active" : "Inactive"}
+						</Tag>
+
+						<div>
+							<Dropdown
+								menu={{
+									items,
+								}}
+								trigger={["click"]}
+								className="cursor-pointer"
+							>
+								<div onClick={(e) => e.preventDefault()}>
+									<Space>
+										<FaUserAlt className="text-lg cursor-pointer" />
+										<AiOutlineDown />
+									</Space>
+								</div>
+							</Dropdown>
+						</div>
 					</div>
 				</div>
 				{Component}

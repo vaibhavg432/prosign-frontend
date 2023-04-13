@@ -144,17 +144,22 @@ const User = ({ name, Component }) => {
 							Your account is inactive. Please contact admin to
 							activate your account or new your subscription.
 						</p>
-						<Button
-							type="primary"
-							danger
-							onClick={() => {
-								window.open(
-									`https://wa.me/8826271548?text=Hello%20Admin%2C%20I%20want%20to%20activate%20my%20account.\n%20My%20email%20is%20${user?.email}`,
-								);
-							}}
-						>
-							Contact Admin
-						</Button>
+						<div className = "w-full flex flex-col gap-2">
+							<Button
+								type="primary"
+								danger
+								onClick={() => {window.open(`https://wa.me/8826271548?text=Hello%20Admin%2C%20I%20want%20to%20activate%20my%20account.\n%20My%20email%20is%20${user?.email}`,);}}
+							>
+								Contact Admin
+							</Button>
+							<Button
+								type="primary"
+								danger
+								onClick={() => { localStorage.removeItem("token"); localStorage.removeItem("user"); navigate("/login"); }}
+							>
+								Logout
+							</Button>
+						</div>
 					</div>
 				</Modal>
 			</div>

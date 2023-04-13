@@ -11,8 +11,12 @@ import {
 const AloneMonitorTable = () => {
 	const [stopPlayListOneScreen, { isLoading: isStopping }] =
 		useStopPlayListOneScreenMutation();
-	const { data: playlist } = useGetPlaylistsQuery();
-	const { data, isLoading } = useGetUngroupedScreensQuery();
+	const { data: playlist } = useGetPlaylistsQuery({},{
+		pollingInterval: 1000,
+	});
+	const { data, isLoading } = useGetUngroupedScreensQuery({},{
+		pollingInterval: 1000,
+	});
 	const [stop, setStop] = useState([]);
 	const [messageApi, contextHolder] = message.useMessage();
 	const showMessage = (text) => {

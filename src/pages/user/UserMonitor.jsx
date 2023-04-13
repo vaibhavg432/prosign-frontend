@@ -19,9 +19,9 @@ const Monitors = () => {
 	const [createAScreenGroup, { isLoading: isCreating }] =
 		useCreateAScreenGroupMutation();
 	const [addMonitor] = useAddMonitorMutation();
-	const { data: ungroupedData } = useGetUngroupedScreensQuery();
+	const { data: ungroupedData } = useGetUngroupedScreensQuery({},{ pollingInterval: 1000, });
 	const ungrouped = ungroupedData?.screens;
-	const { data: userData, isLoading } = useGetUserQuery();
+	const { data: userData, isLoading } = useGetUserQuery({},{ pollingInterval: 1000, });
 	const user = userData?.user;
 	const [messageApi, contextHolder] = message.useMessage();
 	const [count, setCount] = useState(0);

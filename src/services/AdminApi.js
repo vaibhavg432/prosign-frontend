@@ -35,6 +35,14 @@ export const adminApi = createApi({
 			}),
 			invalidatesTags: ["AdminApi"],
 		}),
+		updateScreenLimit: builder.mutation({
+			query : (body)	=> ({
+				url: `update-screen-limit/${body.userId}}`,
+				method: "PATCH",
+				body
+			}),
+			invalidatesTags: ["AdminApi"],
+		})
 	}),
 });
 

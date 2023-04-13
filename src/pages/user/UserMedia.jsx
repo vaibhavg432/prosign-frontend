@@ -115,7 +115,6 @@ const Media = () => {
 									danger
 									className={`${color.btnPrimary}`}
 									onClick={async () => {
-										console.log(file);
 										if (file) {
 											const formData = new FormData();
 											formData.append("data", file);

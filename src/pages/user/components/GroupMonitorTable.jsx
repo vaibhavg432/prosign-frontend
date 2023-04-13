@@ -232,7 +232,6 @@ const GroupMonitorTable = () => {
 											value: monitorList[i]._id,
 										});
 									}
-									console.log(option)
 									setOptions(option);
 								}}
 							>

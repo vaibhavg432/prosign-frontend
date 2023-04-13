@@ -17,14 +17,13 @@ const PersonalInfo = () => {
 		useEditUserProfileMutation();
 	const user = data?.user;
 	const [editData, setEditData] = useState(data?.user);
-	console.log(data, isLoading);
 	return (
 		<div className="w-full flex flex-col gap-4">
 			{!isLoading && (
 				<div className="w-full flex justify-center mt-12">
 					<div className="w-36 h-36 bg-white rounded-full flex items-center justify-center">
 						<h1 className="text-5xl font-medium uppercase">
-							{user.name[0]}
+							{user?.name[0]}
 						</h1>
 					</div>
 				</div>
@@ -66,7 +65,7 @@ const PersonalInfo = () => {
 						<Descriptions title="User Details" column={1}>
 							<Descriptions.Item label="Name">
 								{!edit ? (
-									user.name
+									user?.name
 								) : (
 									<input
 										type="text"
@@ -83,10 +82,10 @@ const PersonalInfo = () => {
 									/>
 								)}
 							</Descriptions.Item>
-							{user.bio && (
+							{user?.bio && (
 								<Descriptions.Item label="User Bio">
 									{!edit ? (
-										user.bio
+										user?.bio
 									) : (
 										<input
 											type="text"
@@ -105,11 +104,11 @@ const PersonalInfo = () => {
 								</Descriptions.Item>
 							)}
 							<Descriptions.Item label="Email ID">
-								{user.email}
+								{user?.email}
 							</Descriptions.Item>
 							<Descriptions.Item label="Telephone">
 								{!edit ? (
-									user.phone
+									user?.phone
 								) : (
 									<input
 										type="text"
@@ -124,10 +123,10 @@ const PersonalInfo = () => {
 									/>
 								)}
 							</Descriptions.Item>
-							{user.address && (
+							{user?.address && (
 								<Descriptions.Item label="Address">
 									{!edit ? (
-										user.address
+										user?.address
 									) : (
 										<input
 											type="text"
@@ -144,10 +143,10 @@ const PersonalInfo = () => {
 								</Descriptions.Item>
 							)}
 							<Descriptions.Item label="Screens Alloted">
-								{user.screenLimit}
+								{user?.screenLimit}
 							</Descriptions.Item>
 							<Descriptions.Item label="Screens Active">
-								{user.screenCount}
+								{user?.screenCount}
 							</Descriptions.Item>
 						</Descriptions>
 					</div>

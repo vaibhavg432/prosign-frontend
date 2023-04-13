@@ -42,7 +42,6 @@ const Login = () => {
 	const onSubmit = async (e) => {
 		e.preventDefault();
 		const { data } = await login(form);
-		console.log(data);
 		if (!data.success) {
 			error(data.message);
 		} else {

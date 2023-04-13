@@ -142,7 +142,7 @@ const User = ({ name, Component }) => {
 						</h1>
 						<p className="text-gray-500">
 							Your account is inactive. Please contact admin to
-							activate your account or new your subscription.
+							activate your account or renew your subscription.
 						</p>
 						<div className = "w-full flex flex-col gap-2">
 							<Button

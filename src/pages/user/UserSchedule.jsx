@@ -189,7 +189,6 @@ const Schedule = () => {
 										danger
 										onClick={async (e) => {
 											e.preventDefault();
-											console.log(selected);
 											const { data } =
 												await playPlaylistOnMixedScreens(
 													selected,

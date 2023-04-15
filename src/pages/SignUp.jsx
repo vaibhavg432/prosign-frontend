@@ -44,7 +44,6 @@ const SignUp = () => {
 				navigate("/login");
 			}, 2000);
 		}
-		console.log(data);
 	};
 	return (
 		<div className={`w-full h-[100vh] flex ${color.primary}`}>

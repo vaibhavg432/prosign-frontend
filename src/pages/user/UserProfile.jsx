@@ -17,7 +17,6 @@ const PersonalInfo = () => {
 		useEditUserProfileMutation();
 	const user = data?.user;
 	const [editData, setEditData] = useState(data?.user);
-	console.log(data, isLoading);
 	return (
 		<div className="w-full flex flex-col gap-4">
 			{!isLoading && (

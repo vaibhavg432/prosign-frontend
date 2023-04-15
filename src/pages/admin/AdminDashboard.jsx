@@ -11,7 +11,6 @@ const Dashboard = () => {
 	const { data: users } = useGetUsersQuery();
 	const { data: screens } = useTotalScreensQuery();
 	const { data: playingScreens } = useCurrentPlayingScreensQuery();
-	console.log(users, screens);
 	const StatusCardData = [
 		{
 			title: "Total Number of Users",

@@ -8,10 +8,6 @@ const AdminNavnar = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
 
-	useEffect(() => {
-		console.log(location.pathname);
-	}, []);
-
 	return (
 		<div className="w-full py-12 h-[100vh] shadow-xl">
 			<div className="w-full flex flex-col items-center gap-4">

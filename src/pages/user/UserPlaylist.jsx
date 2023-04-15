@@ -183,7 +183,6 @@ const Playlist = () => {
 						danger
 						onClick={async (e) => {
 							e.preventDefault();
-							console.log(newPlaylist);
 							const { data } = await createPlaylist(newPlaylist);
 							if (data.success) {
 								setNewPlaylist({
@@ -333,12 +332,10 @@ const Playlist = () => {
 								danger
 								onClick={async (e) => {
 									e.preventDefault();
-									console.log(editPlaylist);
 									const { data } = await updatePlaylist(
 										editPlaylist,
 									);
 
-									console.log(editPlaylist);
 									if (data.success) {
 										messageApi.success(data.message);
 										setEdit(false);

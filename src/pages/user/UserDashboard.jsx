@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
-import { MonitorTable } from "./components";
+import { MonitorTable, ScheduleButton} from "./components";
 import { userLogin } from "../../features/Login";
 import { User, StatusCard } from "../../components";
 import { useGetUserQuery } from "../../services/UserApi";
@@ -50,7 +50,10 @@ const Dashboard = () => {
 				))}
 			</div>
 			<div className="mt-8 w-full">
-				<h1 className="font-bold text-2xl">Live Monitors</h1>
+				<div className = "w-full flex justify-between items-center">
+					<h1 className="font-bold text-2xl">Live Monitors</h1>
+					<ScheduleButton />
+				</div>
 				<div className="mt-2"> <MonitorTable /> </div>
 			</div>
 		</div>

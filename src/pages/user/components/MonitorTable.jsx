@@ -176,6 +176,7 @@ const MonitorTable = () => {
 			title: "Group Associated",
 			dataIndex: "isGrouped",
 			key: "isGrouped",
+			sorter: (a, b) => b.isGrouped - a.isGrouped,
 			render: (text, record) => {
 				return (
 					<div>
@@ -221,6 +222,15 @@ const MonitorTable = () => {
 			title: "Device Status",
 			dataIndex: "status",
 			key: "status",
+			sorter: (a, b) => {
+				if (a.status === "active" && b.status === "inactive") {
+					return 1;
+				} else if (a.status === "inactive" && b.status === "active") {
+					return -1;
+				} else {
+					return 0;
+				}
+			},
 			render: (text) => {
 				return (
 					<div>
@@ -237,6 +247,7 @@ const MonitorTable = () => {
 			title: "Media Assigned",
 			dataIndex: "isPlaying",
 			key: "isPlaying",
+			sorter: (a, b) => b.isPlaying - a.isPlaying,
 			render: (text) => {
 				return (
 					<div>

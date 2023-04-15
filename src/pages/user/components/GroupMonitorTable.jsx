@@ -10,7 +10,7 @@ import {
 	Select,
 } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
-import { AiOutlineMore } from "react-icons/ai";
+import { AiOutlineInfoCircle } from "react-icons/ai";
 
 import { styles } from "../../../constants";
 import { useGetPlaylistsQuery } from "../../../services/PlaylistApi";
@@ -60,6 +60,12 @@ const GroupMonitorTable = () => {
 		});
 	};
 
+
+	const screenName = (id) => {
+		const screen = userMonitors?.screens?.find((screen) => screen._id === id);
+		return screen?.name;
+	};
+
 	const columns = [
 		{
 			title: "SNo.",
@@ -83,7 +89,26 @@ const GroupMonitorTable = () => {
 			},
 		},
 		{
-			title: "Media Status",
+			title: "Playlist Playing / Last Played",
+			dataIndex: "document",
+			key: "document",
+			render: (text) => {
+				return (
+					<div className="flex gap-4">
+						{playlist?.playlist?.map((doc) => {
+							if (doc._id === text) {
+								return (
+									<div key = {doc._id}>
+										<p>{doc.name}</p>
+									</div>
+								);
+							}
+						})}
+					</div>
+				);
+			},
+		},{
+			title: "Media Assigned",
 			dataIndex: "isPlaying",
 			key: "isPlaying",
 			render: (text) => {
@@ -94,26 +119,6 @@ const GroupMonitorTable = () => {
 						) : (
 							<Tag color="red">Not Playing</Tag>
 						)}
-					</div>
-				);
-			},
-		},
-		{
-			title: "Playlist Playing / Last Played",
-			dataIndex: "document",
-			key: "document",
-			render: (text) => {
-				return (
-					<div className="flex gap-4">
-						{playlist?.playlist?.map((doc) => {
-							if (doc._id === text) {
-								return (
-									<div>
-										<p>{doc.name}</p>
-									</div>
-								);
-							}
-						})}
 					</div>
 				);
 			},
@@ -158,7 +163,7 @@ const GroupMonitorTable = () => {
 			render: (text, record, index) => {
 				return (
 					<div className="flex items-center gap-4">
-						<AiOutlineMore
+						<AiOutlineInfoCircle
 							size={20}
 							className="cursor-pointer"
 							onClick={() => {
@@ -265,11 +270,11 @@ const GroupMonitorTable = () => {
 								{" "}
 								{playlist?.playlist?.map((doc) => {
 									if (doc._id === viewData.document) {
-										return <p>{doc.name}</p>;
+										return <p key = {doc._id}>{doc.name}</p>;
 									}
 								})}{" "}
 							</Descriptions.Item>
-							<Descriptions.Item label="Media Status">
+							<Descriptions.Item label="Media Assigned">
 								{" "}
 								{viewData.isPlaying === true ? (
 									<Tag color="green">Playing</Tag>
@@ -284,18 +289,8 @@ const GroupMonitorTable = () => {
 										{" "}
 										{viewData?.screens?.map((screen) => {
 											return (
-												<li>
-													{" "}
-													{userMonitors?.screens?.map(
-														(doc) => {
-															if (
-																doc._id ===
-																screen
-															) {
-																return doc.name;
-															}
-														},
-													)}{" "}
+												<li key = {screen}>
+													{screenName(screen)}
 												</li>
 											);
 										})}{" "}
@@ -308,13 +303,7 @@ const GroupMonitorTable = () => {
 											width: "100%",
 										}}
 										value={editData?.screens?.map((doc) => {
-											return userMonitors?.screens?.map(
-												(item) => {
-													if (item._id === doc) {
-														return item.name;
-													}
-												},
-											);
+											return screenName(doc);
 										})}
 										onChange={(value) =>
 											setEditData({

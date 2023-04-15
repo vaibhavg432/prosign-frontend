@@ -10,7 +10,7 @@ import {
 	Popconfirm,
 } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
-import { AiOutlineMore } from "react-icons/ai";
+import { AiOutlineInfoCircle } from "react-icons/ai";
 import { styles } from "../../constants";
 import { useGetAllDocumentsQuery } from "../../services/UserMediaApi";
 import {
@@ -92,7 +92,7 @@ const Playlist = () => {
 			render: (text, record, index) => {
 				return (
 					<div className="flex items-center gap-4">
-						<AiOutlineMore
+						<AiOutlineInfoCircle
 							size={20}
 							className="cursor-pointer"
 							onClick={() => {

@@ -39,3 +39,13 @@ h1.bold {
 ::-webkit-scrollbar-thumb:hover {
     background: #ff4d4f;
 }
+
+:where(.css-dev-only-do-not-override-ph9edi).ant-pagination .ant-pagination-item-active a {
+    color: #ff4d4f;
+}
+
+:where(.css-dev-only-do-not-override-ph9edi).ant-pagination .ant-pagination-item-active {
+    font-weight: 600;
+    background-color: #ffffff;
+    border-color:#ff4d4f;
+}

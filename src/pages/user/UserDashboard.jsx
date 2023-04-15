@@ -38,7 +38,7 @@ const Dashboard = () => {
 			title: "Playlist",
 			count: playlist?.length,
 			color: "bg-white",
-			path: "/user/playlist",
+			path: "/user/playlists",
 		},
 	];
 	return (
@@ -46,7 +46,7 @@ const Dashboard = () => {
 			<div> <h1 className="font-bold text-2xl">Analytics Overview</h1> </div>
 			<div className="w-full flex flex-wrap mt-2 gap-4">
 				{StatusCardData.map((data, index) => (
-					<StatusCard title={data.title} count={data.count} color={data.color} key={index} />
+					<StatusCard title={data.title} count={data.count} color={data.color} key={index} path = {data.path} />
 				))}
 			</div>
 			<div className="mt-8 w-full">

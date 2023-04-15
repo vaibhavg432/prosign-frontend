@@ -24,9 +24,18 @@ const MonitorTable = () => {
 		useUpdateMonitorNameMutation();
 	const [logoutScreen, { isLoading: isLoggingOut }] =
 		useLogoutScreenMutation();
-	const { data: playlist } = useGetPlaylistsQuery({},{ pollingInterval: 1000, });
-	const { data, isLoading } = useGetUserMonitorQuery({},{ pollingInterval: 1000, });
-	const { data: groupedData } = useGetGroupedScreensQuery({},{ pollingInterval: 1000, });
+	const { data: playlist } = useGetPlaylistsQuery(
+		{},
+		{ pollingInterval: 1000 },
+	);
+	const { data, isLoading } = useGetUserMonitorQuery(
+		{},
+		{ pollingInterval: 1000 },
+	);
+	const { data: groupedData } = useGetGroupedScreensQuery(
+		{},
+		{ pollingInterval: 1000 },
+	);
 	const [messageApi, contextHolder] = message.useMessage();
 	const [showPass, setShowPass] = React.useState([]);
 	const [name, setName] = React.useState([]);
@@ -125,35 +134,39 @@ const MonitorTable = () => {
 					<div className="w-full flex">
 						<div className="text-sm">
 							<h1>{record.username}</h1>
-							<h1>
-								<span className="font-bold">Pass :</span>{" "}
-								{showPass[index] ? (
-									<Tag color="blue">{record.password}</Tag>
-								) : (
-									<Tag color="green">********</Tag>
-								)}
-							</h1>
-						</div>
-						<div className="flex w-full justify-center items-center">
-							{showPass[index] ? (
-								<EyeInvisibleOutlined
-									className="cursor-pointer"
-									onClick={() => {
-										const temp1 = [...showPass];
-										temp1[index] = false;
-										setShowPass(temp1);
-									}}
-								/>
-							) : (
-								<EyeOutlined
-									className="cursor-pointer"
-									onClick={() => {
-										const temp1 = [...showPass];
-										temp1[index] = true;
-										setShowPass(temp1);
-									}}
-								/>
-							)}
+							<div className = "flex gap-4">
+								<h1>
+									<span className="font-bold">Pass :</span>{" "}
+									{showPass[index] ? (
+										<Tag color="blue">
+											{record.password}
+										</Tag>
+									) : (
+										<Tag color="green">********</Tag>
+									)}
+								</h1>
+								<div className="flex justify-center items-center">
+									{showPass[index] ? (
+										<EyeInvisibleOutlined
+											className="cursor-pointer"
+											onClick={() => {
+												const temp1 = [...showPass];
+												temp1[index] = false;
+												setShowPass(temp1);
+											}}
+										/>
+									) : (
+										<EyeOutlined
+											className="cursor-pointer"
+											onClick={() => {
+												const temp1 = [...showPass];
+												temp1[index] = true;
+												setShowPass(temp1);
+											}}
+										/>
+									)}
+								</div>
+							</div>
 						</div>
 					</div>
 				);
@@ -178,17 +191,28 @@ const MonitorTable = () => {
 			},
 		},
 		{
-			title: "Media Status",
-			dataIndex: "isPlaying",
-			key: "isPlaying",
+			title: "Playlist Playing / Last Played",
+			dataIndex: "document",
+			key: "document",
 			render: (text) => {
 				return (
-					<div>
-						{text === true ? (
-							<Tag color="green">Playing</Tag>
-						) : (
-							<Tag color="red">Not Playing</Tag>
-						)}
+					<div className="flex gap-4">
+						{playlist?.playlist?.map((doc) => {
+							if (doc._id === text) {
+								return (
+									<div key = {doc._id}>
+										<p
+											className="cursor-pointer"
+											onClick={() =>
+												navigate("/user/playlists")
+											}
+										>
+											{doc.name}
+										</p>
+									</div>
+								);
+							}
+						})}
 					</div>
 				);
 			},
@@ -210,28 +234,17 @@ const MonitorTable = () => {
 			},
 		},
 		{
-			title: "Playlist Playing / Last Played",
-			dataIndex: "document",
-			key: "document",
+			title: "Media Assigned",
+			dataIndex: "isPlaying",
+			key: "isPlaying",
 			render: (text) => {
 				return (
-					<div className="flex gap-4">
-						{playlist?.playlist?.map((doc) => {
-							if (doc._id === text) {
-								return (
-									<div>
-										<p
-											className="cursor-pointer"
-											onClick={() =>
-												navigate("/user/playlists")
-											}
-										>
-											{doc.name}
-										</p>
-									</div>
-								);
-							}
-						})}
+					<div>
+						{text === true ? (
+							<Tag color="green">Playing</Tag>
+						) : (
+							<Tag color="red">Not Playing</Tag>
+						)}
 					</div>
 				);
 			},
@@ -331,6 +344,9 @@ const MonitorTable = () => {
 					dataSource={data?.screens}
 					pagination={{ pageSize: 15, position: ["bottomCenter"] }}
 					scroll={{ x: 240 }}
+					colorPrimary = "#FF4D4F"
+					colorPrimaryBorder = "#FF4D4F"
+					colorPrimaryHover = "#FF4D4F"
 				/>
 			) : (
 				<div className="w-full flex justify-center items-center h-48">

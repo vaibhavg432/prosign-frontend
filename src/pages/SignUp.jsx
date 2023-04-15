@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Space, message } from "antd";
+import { Button, Space, message, Input } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
@@ -88,8 +88,7 @@ const SignUp = () => {
 						</div>
 						<div>
 							<label className={styles.label}>Password*</label>
-							<input
-								type="password"
+							<Input.Password
 								className={styles.input}
 								placeholder="Enter your password"
 								value={form.password}
@@ -105,8 +104,7 @@ const SignUp = () => {
 							<label className={styles.label}>
 								Confirm Password *
 							</label>
-							<input
-								type="password"
+							<Input.Password
 								className={styles.input}
 								placeholder="Re - Enter your password"
 								value={form.confirmPassword}

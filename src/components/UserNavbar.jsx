@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
-import logo from "../assets/images/logo.jpg";
+
 import { userLinks } from "../constants/data";
 import { styles } from "../constants";
 

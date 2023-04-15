@@ -40,17 +40,21 @@ const AloneMonitorTable = () => {
 			key: "name",
 		},
 		{
-			title: "Media Status",
-			dataIndex: "isPlaying",
-			key: "isPlaying",
+			title: "Playlist Playing / Last Played",
+			dataIndex: "document",
+			key: "document",
 			render: (text) => {
 				return (
-					<div>
-						{text === true ? (
-							<Tag color="green">Playing</Tag>
-						) : (
-							<Tag color="red">Not Playing</Tag>
-						)}
+					<div className="flex gap-4">
+						{playlist?.playlist?.map((doc) => {
+							if (doc._id === text) {
+								return (
+									<div key = {doc._id}>
+										<p>{doc.name}</p>
+									</div>
+								);
+							}
+						})}
 					</div>
 				);
 			},
@@ -70,23 +74,18 @@ const AloneMonitorTable = () => {
 					</div>
 				);
 			},
-		},
-		{
-			title: "Playlist Playing / Last Played",
-			dataIndex: "document",
-			key: "document",
+		},{
+			title: "Media Assigned",
+			dataIndex: "isPlaying",
+			key: "isPlaying",
 			render: (text) => {
 				return (
-					<div className="flex gap-4">
-						{playlist?.playlist?.map((doc) => {
-							if (doc._id === text) {
-								return (
-									<div>
-										<p>{doc.name}</p>
-									</div>
-								);
-							}
-						})}
+					<div>
+						{text === true ? (
+							<Tag color="green">Playing</Tag>
+						) : (
+							<Tag color="red">Not Playing</Tag>
+						)}
 					</div>
 				);
 			},

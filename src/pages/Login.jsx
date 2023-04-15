@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Button, Space, message, Modal } from "antd";
+import { Button, Space, message, Modal, Input } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 
 import "../index.css";
-import { Loader } from "../components";
+import logo from "../assets/images/logo.png";
 import { COLORS, styles } from "../constants";
 import logins from "../assets/images/login.svg";
 import { useLoginMutation } from "../services/AuthApi";
@@ -93,7 +93,8 @@ const Login = () => {
 					<div
 						className={` w-[90%] sm:w-[65%] h-[90%] sm:h-[80%] flex flex-col items-center justify-between py-12 bg-white rounded-md`}
 					>
-						<div className="px-4 w-full flex flex-col items-center gap-4">
+						<div className="px-4 w-full flex justify-center items-center gap-4">
+							<img src = {logo} alt="logo" className="w-8 h-8" />
 							<h1 className="text-xl">Enter Your Credentials</h1>
 						</div>
 						<div className="w-full flex flex-col px-8 mt-4 gap-4 ">
@@ -116,17 +117,16 @@ const Login = () => {
 								<label className={styles.label}>
 									Password*
 								</label>
-								<input
-									type="password"
+								<Input.Password
 									className={styles.input}
 									placeholder="Enter your password"
 									value={form.password}
-									onChange={(e) =>
+									onChange={(e) => { 
 										setForm({
 											...form,
 											password: e.target.value,
-										})
-									}
+										});
+									}}
 								/>
 								{/* //forgot Password */}
 								<h1

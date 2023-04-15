@@ -102,14 +102,7 @@ const User = ({ name, Component }) => {
 						<h1 className="text-xl bold text-red-700">{name}</h1>
 					</div>
 					<div className="flex gap-4">
-						<Tag
-							color={`${
-								user?.status === "active" ? "green" : "red"
-							}`}
-						>
-							{user?.status === "active" ? "Active" : "Inactive"}
-						</Tag>
-
+						
 						<div>
 							<Dropdown
 								menu={{
@@ -130,7 +123,7 @@ const User = ({ name, Component }) => {
 				</div>
 				{Component}
 				<Modal
-					visible={user?.status === "inactive"}
+					open={user?.status === "inactive"}
 					footer={null}
 					closable={false}
 					maskClosable={false}

@@ -21,7 +21,7 @@ const Monitors = () => {
 		useStopAllScreensMutation();
 	const [createAScreenGroup, { isLoading: isCreating }] =
 		useCreateAScreenGroupMutation();
-	const [addMonitor] = useAddMonitorMutation();
+	const [addMonitor, {isLoading : isAdding}] = useAddMonitorMutation();
 	const { data: ungroupedData } = useGetUngroupedScreensQuery(
 		{},
 		{ pollingInterval: 1000 },
@@ -199,7 +199,7 @@ const Monitors = () => {
 									type="primary"
 									danger
 									className="bg-[#598392] mt-4"
-									onClick={() => {
+									onClick={async () => {
 										if (
 											count >
 											user.screenLimit - user.screenCount
@@ -212,13 +212,13 @@ const Monitors = () => {
 											);
 											return;
 										}
-										addMonitor(count);
+										await addMonitor(count);
 										setIsOpen(false);
 										showMessage(count + " Monitor Added");
 										setCount(0);
 									}}
 								>
-									Add
+									{isAdding ? <LoadingOutlined className = "text-white"/> : "Add"}
 								</Button>
 							</Modal>
 						</Space>

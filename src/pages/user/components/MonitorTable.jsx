@@ -26,15 +26,15 @@ const MonitorTable = () => {
 		useLogoutScreenMutation();
 	const { data: playlist } = useGetPlaylistsQuery(
 		{},
-		{ pollingInterval: 1000 },
+		{ pollingInterval: 60000 },
 	);
 	const { data, isLoading } = useGetUserMonitorQuery(
 		{},
-		{ pollingInterval: 1000 },
+		{ pollingInterval: 60000 },
 	);
 	const { data: groupedData } = useGetGroupedScreensQuery(
 		{},
-		{ pollingInterval: 1000 },
+		{ pollingInterval: 60000 },
 	);
 	const [messageApi, contextHolder] = message.useMessage();
 	const [showPass, setShowPass] = React.useState([]);

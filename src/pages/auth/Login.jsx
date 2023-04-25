@@ -5,12 +5,12 @@ import { LoadingOutlined } from "@ant-design/icons";
 import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 
-import "../index.css";
-import logo from "../assets/images/logo.png";
-import { COLORS, styles } from "../constants";
-import logins from "../assets/images/login.svg";
-import { useLoginMutation } from "../services/AuthApi";
-import { userLogin, adminLogin } from "../features/Login";
+import "../../index.css";
+import logo from "../../assets/images/logo.png";
+import { COLORS, styles } from "../../constants";
+import logins from "../../assets/images/login.svg";
+import { useLoginMutation, useForgetPasswordMutation } from "../../services/AuthApi";
+import { userLogin, adminLogin } from "../../features/Login";
 
 const Login = () => {
 	const [isOpen, setIsOpen] = useState(false);
@@ -18,6 +18,7 @@ const Login = () => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const [login, { isLoading: isLogging }] = useLoginMutation();
+	const [forgetPassword, { isLoading: isResetting }] = useForgetPasswordMutation();
 	const [form, setForm] = useState({
 		email: "",
 		password: "",
@@ -66,6 +67,20 @@ const Login = () => {
 			// window.location.reload();
 		}
 	};
+
+	const handleForgotPassword = async () => {
+		console.log("clicked");
+		const { data } = await forgetPassword(resetForm);
+		console.log(data);
+		if (!data.success) {
+			error(data.message);
+		}else{
+			success(data.message);
+			setIsOpen(false);
+			resetForm.email = "";
+		}
+	}
+
 	return (
 		<div className={`w-full max-h-[100vh]  ${color.primary}`}>
 			<div className="h-[10vh] flex items-center px-8 gap-2">
@@ -158,12 +173,14 @@ const Login = () => {
 										}
 									/>
 									<div className="w-full flex justify-between items-center mt-4">
+										{contextHolder}
 										<Button
 											type="primary"
 											danger
 											className={`${color.btnPrimary}`}
+											onClick = {handleForgotPassword}
 										>
-											Send Mail
+											{isResetting ? <LoadingOutlined className="text-white" /> : "Send Mail"}
 										</Button>
 									</div>
 								</div>

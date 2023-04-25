@@ -22,7 +22,7 @@ const Navbar = () => {
 			}
 		} else {
 			dispatch(logout());
-			window.location.href = "https://digisigns.in/";
+			navigate("/");
 		}
 		// eslint-disable-next-line
 	}, []);

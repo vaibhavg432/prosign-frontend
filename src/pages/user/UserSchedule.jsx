@@ -9,7 +9,7 @@ import {
 import { useGetPlaylistsQuery } from "../../services/PlaylistApi";
 
 const Schedule = () => {
-	const { data: playlist } = useGetPlaylistsQuery({},{ pollingInterval: 1000, });
+	const { data: playlist } = useGetPlaylistsQuery({},{ pollingInterval: 60000, });
 	const { data, isLoading: monitorLoading } =
 		useGetCurrentPlayingMonitorsQuery();
 	const columns = [

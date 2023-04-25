@@ -18,9 +18,9 @@ const ScheduleButton = () => {
 		playlist: "",
 	});
 
-	const { data: groupedData } = useGetGroupedScreensQuery({}, { pollingInterval: 1000, });
-	const { data: ungroupedData } = useGetUngroupedScreensQuery({}, { pollingInterval: 1000, });
-	const { data: playlist } = useGetPlaylistsQuery({}, { pollingInterval: 1000, });
+	const { data: groupedData } = useGetGroupedScreensQuery({}, { pollingInterval: 60000, });
+	const { data: ungroupedData } = useGetUngroupedScreensQuery({}, { pollingInterval: 60000, });
+	const { data: playlist } = useGetPlaylistsQuery({}, { pollingInterval: 60000, });
 	const [playPlaylistOnMixedScreens, { isLoading: isScheduling }] =
 		usePlayPlaylistOnMixedScreensMutation();
 	return (

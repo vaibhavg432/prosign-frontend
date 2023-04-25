@@ -3,10 +3,10 @@ import { Button, Space, message, Input } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
-import "../index.css";
-import { COLORS, styles } from "../constants";
-import signup from "../assets/images/signup.svg";
-import { useRegisterMutation } from "../services/AuthApi";
+import "../../index.css";
+import { COLORS, styles } from "../../constants";
+import signup from "../../assets/images/signup.svg";
+import { useRegisterMutation } from "../../services/AuthApi";
 
 const SignUp = () => {
 	const [messageApi, contextHolder] = message.useMessage();

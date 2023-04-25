@@ -1,13 +1,11 @@
 import React, { useState } from "react";
-import { Segmented, Avatar, Descriptions, Button, Space, message } from "antd";
+import { Segmented, Descriptions, Button, Space, message, Input } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 
 import { User } from "../../components";
 import styles from "../../constants/styles";
-import {
-	useGetUserQuery,
-	useEditUserProfileMutation,
-} from "../../services/UserApi";
+import { useGetUserQuery, useEditUserProfileMutation } from "../../services/UserApi";
+import { useResetPasswordMutation } from "../../services/AuthApi";
 
 const PersonalInfo = () => {
 	const [edit, setEdit] = useState(false);
@@ -157,11 +155,27 @@ const PersonalInfo = () => {
 };
 
 const AccountSettings = () => {
+	const [resetPassword, {isLoading : isResetting}] = useResetPasswordMutation();
+	const [messageApi, contextHolder] = message.useMessage();
 	const [resetPass, setResetPass] = useState({
 		currentPassword: "",
 		password: "",
 		confirmPassword: "",
 	});
+	const handleResetPassword = async(e) =>{
+		e.preventDefault();
+		const { data } = await resetPassword(resetPass)
+		if(data.success){
+			messageApi.success(data.message);
+			setResetPass({
+				currentPassword: "",
+				password: "",
+				confirmPassword: "",
+			});
+		}else{
+			messageApi.error(data.message);
+		}
+	}
 	return (
 		<div className="w-full flex flex-col gap-4">
 			<div className="w-full flex flex-col gap-2 mt-12">
@@ -169,68 +183,21 @@ const AccountSettings = () => {
 				<div className="w-full flex justify-center">
 					<div className="w-[95%] sm:w-[80%] p-8 bg-white rounded-md">
 						<div>
-							<label className={styles.label}>
-								Current Password*
-							</label>
-							<input
-								className={styles.input}
-								type="password"
-								value={resetPass.currentPassword}
-								placeholder="Enter your current password"
-								onChange={(e) => {
-									setResetPass({
-										...resetPass,
-										currentPassword: e.target.value,
-									});
-								}}
-							/>
+							<label className={styles.label}> Current Password* </label>
+							<Input.Password className={styles.input} type="password" value={resetPass.currentPassword} placeholder="Enter your current password" onChange={(e) => { setResetPass({ ...resetPass, currentPassword: e.target.value, }); }} />
 						</div>
 						<div className="mt-4">
-							<label className={styles.label}>
-								New Password*
-							</label>
-							<input
-								className={styles.input}
-								type="password"
-								value={resetPass.password}
-								placeholder="Enter your new password"
-								onChange={(e) => {
-									setResetPass({
-										...resetPass,
-										password: e.target.value,
-									});
-								}}
-							/>
+							<label className={styles.label}> New Password* </label>
+							<Input.Password className={styles.input} type="password" value={resetPass.password} placeholder="Enter your new password" onChange={(e) => { setResetPass({ ...resetPass, password: e.target.value, }); }} />
 						</div>
 						<div className="mt-4">
-							<label className={styles.label}>
-								Confirm New Password*
-							</label>
-							<input
-								className={styles.input}
-								type="password"
-								value={resetPass.confirmPassword}
-								placeholder="Confirm your new password"
-								onChange={(e) => {
-									setResetPass({
-										...resetPass,
-										confirmPassword: e.target.value,
-									});
-								}}
-							/>
+							<label className={styles.label}> Confirm New Password* </label>
+							<Input.Password className={styles.input} type="password" value={resetPass.confirmPassword} placeholder="Confirm your new password" onChange={(e) => { setResetPass({ ...resetPass, confirmPassword: e.target.value, }); }} />
 						</div>
 						<div className="w-full flex justify-center mt-8">
-							<Space
-								direction="vertical"
-								className="w-3/4 sm:w-1/2"
-							>
-								<Button
-									type="primary"
-									block
-									className="bg-[#598392]"
-								>
-									Change Password
-								</Button>
+							<Space direction="vertical" className="w-3/4 sm:w-1/2" >
+								{contextHolder}
+								<Button type="primary" block danger onClick={handleResetPassword} > {isResetting ? <LoadingOutlined className = "text-white"/> : "Reset Password"} </Button>
 							</Space>
 						</div>
 					</div>

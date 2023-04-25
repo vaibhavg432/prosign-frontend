@@ -13,7 +13,7 @@ import { useGetUserQuery } from "../services/UserApi";
 import "../index.css";
 
 const User = ({ name, Component }) => {
-	const { data: userData } = useGetUserQuery({}, { pollingInterval: 1000 });
+	const { data: userData } = useGetUserQuery({}, { pollingInterval: 60000 });
 	const user = userData?.user;
 	const navigate = useNavigate();
 	const items = [

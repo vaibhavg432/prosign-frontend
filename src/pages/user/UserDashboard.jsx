@@ -9,9 +9,9 @@ import { useGetAllDocumentsQuery } from "../../services/UserMediaApi";
 import { useGetPlaylistsQuery } from "../../services/PlaylistApi";
 
 const Dashboard = () => {
-	const { data: userData } = useGetUserQuery({},{ pollingInterval: 1000, });
-	const { data: mediaData } = useGetAllDocumentsQuery({},{ pollingInterval: 1000, });
-	const { data: playlistData } = useGetPlaylistsQuery({},{ pollingInterval: 1000, });
+	const { data: userData } = useGetUserQuery({},{ pollingInterval: 60000, });
+	const { data: mediaData } = useGetAllDocumentsQuery({},{ pollingInterval: 60000, });
+	const { data: playlistData } = useGetPlaylistsQuery({},{ pollingInterval: 60000, });
 	const user = userData?.user;
 	const media = mediaData?.documents;
 	const playlist = playlistData?.playlist;

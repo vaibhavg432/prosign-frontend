@@ -37,7 +37,7 @@ export const adminApi = createApi({
 		}),
 		updateScreenLimit: builder.mutation({
 			query : (body)	=> ({
-				url: `update-screen-limit/${body.userId}}`,
+				url: `update-screen-limit/${body.id}`,
 				method: "PATCH",
 				body
 			}),
@@ -48,6 +48,7 @@ export const adminApi = createApi({
 
 export const {
 	useGetUsersQuery,
+	useUpdateScreenLimitMutation,
 	useTotalScreensQuery,
 	useCurrentPlayingScreensQuery,
 	useToggleStatusOfUserMutation,

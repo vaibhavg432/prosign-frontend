@@ -11,7 +11,7 @@ const Media = () => {
 	const [messageApi, contextHolder] = message.useMessage();
 	const [file, setFile] = useState(null);
 
-	const { data, isLoading } = useGetAllDocumentsQuery({},{ pollingInterval: 1000, });
+	const { data, isLoading } = useGetAllDocumentsQuery({},{ pollingInterval: 60000, });
 
 	const [uploadOneDocument, { isLoading: isUploading }] = useUploadOneDocumentMutation();
 	const [deleteOneDocument, { isLoading : isDeleting }] = useDeleteOneDocumentMutation();

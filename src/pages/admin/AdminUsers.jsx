@@ -2,17 +2,23 @@ import React, { useState } from "react";
 import { Table, Tag, Modal, Descriptions, Button, message } from "antd";
 import { MoreOutlined, LoadingOutlined } from "@ant-design/icons";
 
+import { styles } from "../../constants";
 import { Admin } from "../../components";
 import {
 	useGetUsersQuery,
+	useUpdateScreenLimitMutation,
 	useToggleStatusOfUserMutation,
 } from "../../services/AdminApi";
 
 const Users = () => {
+	const [openLimit, setOpenLimit] = useState(false);
+	const [newLimit, setNewLimit] = useState(0);
 	const [messageApi, contextHolder] = message.useMessage();
 	const [open, setOpen] = useState(false);
 	const [user, setUser] = useState({});
-	const { data: users } = useGetUsersQuery();
+	const { data: users } = useGetUsersQuery({}, {pollingInterval: 60000});
+	const [updateScreenLimit, { isLoading: isUpdating }] =
+		useUpdateScreenLimitMutation();
 	const [toggleStatus, { isLoading: isToggling }] =
 		useToggleStatusOfUserMutation();
 	const columns = [
@@ -102,7 +108,61 @@ const Users = () => {
 				width={800}
 			>
 				<br />
-				<div className="w-full flex justify-end">
+				<div className="w-full flex justify-end gap-4">
+					{contextHolder}
+					<Button
+						type="primary"
+						danger
+						onClick={async () => {
+							setOpenLimit(true);
+						}}
+					>
+						{isToggling ? (
+							<LoadingOutlined className="text-white" />
+						) : (
+							"Increase Screen Limit"
+						)}
+					</Button>
+					<Modal
+						title="Increase Screen Limit"
+						visible={openLimit}
+						onCancel={() => setOpenLimit(false)}
+						footer={null}
+					>
+						<div className="w-full flex flex-col gap-4">
+							<input
+								type="number"
+								className={styles.input}
+								value={newLimit}
+								onChange={(e) => setNewLimit(e.target.value)}
+							/>
+							<Button
+								type="primary"
+								danger
+								onClick={async () => {
+									await updateScreenLimit({
+										id: user._id,
+										screenLimit: newLimit,
+									});
+									messageApi.success({
+										content: "Screen Limit Updated",
+										key: "toggleStatus",
+										duration: 2,
+									});
+
+									setNewLimit(0);
+									setOpenLimit(false);
+								}}
+							>
+								{isUpdating ? (
+									<LoadingOutlined className="text-white" />
+								) : (
+									"Update"
+								)}
+							</Button>
+						</div>
+					</Modal>
+
 					{contextHolder}
 					<Button
 						type="primary"

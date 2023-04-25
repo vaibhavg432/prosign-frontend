@@ -32,19 +32,19 @@ const GroupMonitorTable = () => {
 
 	const { data: userMonitors } = useGetUserMonitorQuery(
 		{},
-		{ pollingInterval: 1000 },
+		{ pollingInterval: 60000 },
 	);
 	const { data: ungroupedScreens } = useGetUngroupedScreensQuery(
 		{},
-		{ pollingInterval: 1000 },
+		{ pollingInterval: 60000 },
 	);
 	const { data, isLoading } = useGetGroupedScreensQuery(
 		{},
-		{ pollingInterval: 1000 },
+		{ pollingInterval: 60000 },
 	);
 	const { data: playlist } = useGetPlaylistsQuery(
 		{},
-		{ pollingInterval: 1000 },
+		{ pollingInterval: 60000 },
 	);
 
 	const [stopPlayListOneGroup, { isLoading: isStopping }] =

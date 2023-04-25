@@ -24,12 +24,12 @@ const Monitors = () => {
 	const [addMonitor, {isLoading : isAdding}] = useAddMonitorMutation();
 	const { data: ungroupedData } = useGetUngroupedScreensQuery(
 		{},
-		{ pollingInterval: 1000 },
+		{ pollingInterval: 60000 },
 	);
 	const ungrouped = ungroupedData?.screens;
 	const { data: userData, isLoading } = useGetUserQuery(
 		{},
-		{ pollingInterval: 1000 },
+		{ pollingInterval: 60000 },
 	);
 	const user = userData?.user;
 	const [messageApi, contextHolder] = message.useMessage();

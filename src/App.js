@@ -3,8 +3,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import { userLogin, adminLogin, logout } from "./features/Login";
-import { Home, Login, SignUp } from "./pages";
+import { Home } from "./pages";
 import { NotFound, NotAccess } from "./components";
+import { Login, SignUp, ResetPass } from "./pages/auth";
 import {
 	UserDashboard,
 	UserMedia,
@@ -42,8 +43,10 @@ const App = () => {
 		<Router>
 			<Routes>
 				<Route path="/" element={<Home />} />
+
 				<Route path="/login" element={<Login />} />
 				<Route path="/signup" element={<SignUp />} />
+				<Route path="/reset-password/:id" element={<ResetPass />} />
 
 				<Route path="/user" element={userLog ? <UserDashboard /> : <NotAccess />} />
 				<Route path="/user/monitors" element={userLog ? <UserMonitor /> : <NotAccess />} />
